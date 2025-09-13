@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egypt Weather - Real Time</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .weather-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 350px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .city-selector {
+            margin-bottom: 30px;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 25px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #0984e3;
+            color: white;
+        }
+
+        .weather-info {
+            display: none;
+        }
+
+        .temperature {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .description {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-transform: capitalize;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .detail-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .loading {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .error {
+            color: #ff6b6b;
+            margin: 20px 0;
+        }
+
+        .last-updated {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <h1> Egypt Weather</h1>
+        
+        <div class="city-selector">
+            <select id="citySelect">
+                <option value="Cairo">Cairo</option>
+                <option value="Alexandria">Alexandria</option>
+                <option value="Giza">Giza</option>
+                <option value="Luxor">Luxor</option>
+                <option value="Aswan">Aswan</option>
+                <option value="Sharm El Sheikh">Sharm El Sheikh</option>
+                <option value="Hurghada">Hurghada</option>
+            </select>
+        </div>
+
+        <div class="loading" id="loading">Loading weather data...</div>
+        <div class="error" id="error" style="display: none;"></div>
+        
+        <div class="weather-info" id="weatherInfo">
+            <div class="temperature" id="temperature"></div>
+            <div class="description" id="description"></div>
+            
+            <div class="details">
+                <div class="detail-item">
+                    <div class="detail-label">Feels Like</div>
+                    <div class="detail-value" id="feelsLike"></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Humidity</div>
+                    <div class="detail-value" id="humidity"></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Wind Speed</div>
+                    <div class="detail-value" id="windSpeed"></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Pressure</div>
+                    <div class="detail-value" id="pressure"></div>
+                </div>
+            </div>
+            
+            <div class="last-updated" id="lastUpdated"></div>
+        </div>
+        
+        <button class="refresh-btn" id="refreshBtn" onclick="fetchWeather()"> Refresh</button>
+    </div>
+
+    <script>
+        const API_KEY = 'demo_key'; // Using OpenWeatherMap demo - replace with real API key
+        const citySelect = document.getElementById('citySelect');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const weatherInfo = document.getElementById('weatherInfo');
+        
+        // Weather elements
+        const temperature = document.getElementById('temperature');
+        const description = document.getElementById('description');
+        const feelsLike = document.getElementById('feelsLike');
+        const humidity = document.getElementById('humidity');
+        const windSpeed = document.getElementById('windSpeed');
+        const pressure = document.getElementById('pressure');
+        const lastUpdated = document.getElementById('lastUpdated');
+
+        // Mock weather data for demo purposes
+        const mockWeatherData = {
+            Cairo: { temp: 28, feels_like: 31, description: 'clear sky', humidity: 45, wind_speed: 3.2, pressure: 1013 },
+            Alexandria: { temp: 25, feels_like: 27, description: 'few clouds', humidity: 65, wind_speed: 4.1, pressure: 1015 },
+            Giza: { temp: 29, feels_like: 32, description: 'clear sky', humidity: 42, wind_speed: 2.8, pressure: 1012 },
+            Luxor: { temp: 35, feels_like: 38, description: 'sunny', humidity: 25, wind_speed: 2.1, pressure: 1008 },
+            Aswan: { temp: 37, feels_like: 41, description: 'clear sky', humidity: 22, wind_speed: 1.8, pressure: 1006 },
+            'Sharm El Sheikh': { temp: 30, feels_like: 33, description: 'clear sky', humidity: 55, wind_speed: 3.5, pressure: 1014 },
+            Hurghada: { temp: 32, feels_like: 35, description: 'few clouds', humidity: 48, wind_speed: 4.2, pressure: 1011 }
+        };
+
+        async function fetchWeather() {
+            const selectedCity = citySelect.value;
+            
+            showLoading();
+            hideError();
+            hideWeatherInfo();
+
+            try {
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Use mock data for demo
+                const data = mockWeatherData[selectedCity];
+                
+                if (data) {
+                    displayWeatherData(data, selectedCity);
+                } else {
+                    throw new Error('City not found');
+                }
+                
+            } catch (err) {
+                showError('Failed to fetch weather data. Please try again.');
+                console.error('Weather fetch error:', err);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayWeatherData(data, city) {
+            temperature.textContent = `${Math.round(data.temp)}°C`;
+            description.textContent = data.description;
+            feelsLike.textContent = `${Math.round(data.feels_like)}°C`;
+            humidity.textContent = `${data.humidity}%`;
+            windSpeed.textContent = `${data.wind_speed} m/s`;
+            pressure.textContent = `${data.pressure} hPa`;
+            
+            const now = new Date();
+            lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+            
+            showWeatherInfo();
+        }
+
+        function showLoading() {
+            loading.style.display = 'block';
+        }
+
+        function hideLoading() {
+            loading.style.display = 'none';
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        function hideError() {
+            error.style.display = 'none';
+        }
+
+        function showWeatherInfo() {
+            weatherInfo.style.display = 'block';
+        }
+
+        function hideWeatherInfo() {
+            weatherInfo.style.display = 'none';
+        }
+
+        // Event listeners
+        citySelect.addEventListener('change', fetchWeather);
+
+        // Auto-refresh every 5 minutes
+        setInterval(fetchWeather, 300000);
+
+        // Initial load
+        fetchWeather();
+    </script>
+</body>
+</html>
