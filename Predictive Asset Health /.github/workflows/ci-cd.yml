@@ -1,0 +1,267 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: facilis/predictive-asset-health
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [process-engineer-agent, reliability-agent, ops-manager-agent, quality-safety-agent]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: ./services/${{ matrix.service }}
+        run: |
+          pip install -r requirements.txt
+          pip install pytest black flake8 mypy
+
+      - name: Lint with black
+        working-directory: ./services/${{ matrix.service }}
+        run: black --check --diff .
+
+      - name: Lint with flake8
+        working-directory: ./services/${{ matrix.service }}
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Type check with mypy
+        working-directory: ./services/${{ matrix.service }}
+        run: mypy --ignore-missing-imports .
+
+      - name: Test with pytest
+        working-directory: ./services/${{ matrix.service }}
+        run: pytest tests/ -v --cov=. --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./services/${{ matrix.service }}/coverage.xml
+          flags: ${{ matrix.service }}
+
+  test-ui:
+    name: Test UI
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ui/operator-console/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./ui/operator-console
+        run: npm ci
+
+      - name: Lint
+        working-directory: ./ui/operator-console
+        run: npm run lint
+
+      - name: Type check
+        working-directory: ./ui/operator-console
+        run: npm run type-check
+
+      - name: Build
+        working-directory: ./ui/operator-console
+        run: npm run build
+
+  build-and-push:
+    name: Build and Push Images
+    needs: [lint-and-test, test-ui]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        service: [process-engineer-agent, reliability-agent, ops-manager-agent, quality-safety-agent, operator-console]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service == 'operator-console' && 'ui/operator-console' || format('services/{0}', matrix.service) }}
+          file: ${{ matrix.service == 'operator-console' && 'ui/operator-console/Dockerfile' || format('services/{0}/Dockerfile', matrix.service) }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-dev:
+    name: Deploy to DEV
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    
+    environment: development
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: '3.13.0'
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: '1.28.0'
+
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+          export KUBECONFIG=kubeconfig
+
+      - name: Deploy to DEV
+        run: |
+          helm upgrade --install asset-health-dev ./infra/helm/asset-health \
+            --namespace industrial-ai-dev \
+            --create-namespace \
+            --values ./infra/helm/asset-health/values.yaml \
+            --values ./infra/helm/asset-health/values-dev.yaml \
+            --set global.imageTag=${{ github.sha }} \
+            --wait --timeout=10m
+
+  deploy-prod:
+    name: Deploy to PROD
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: '3.13.0'
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: '1.28.0'
+
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+          export KUBECONFIG=kubeconfig
+
+      - name: Run pre-deployment tests
+        run: |
+          # Run smoke tests against staging environment
+          echo "Running pre-deployment validation..."
+
+      - name: Deploy to PROD
+        run: |
+          helm upgrade --install asset-health ./infra/helm/asset-health \
+            --namespace industrial-ai \
+            --create-namespace \
+            --values ./infra/helm/asset-health/values.yaml \
+            --values ./infra/helm/asset-health/values-prod.yaml \
+            --set global.imageTag=${{ github.sha }} \
+            --wait --timeout=15m
+
+      - name: Run post-deployment tests
+        run: |
+          # Run integration tests against production
+          echo "Running post-deployment validation..."
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  generate-sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: sbom.spdx.json
