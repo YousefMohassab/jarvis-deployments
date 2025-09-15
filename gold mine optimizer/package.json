@@ -1,0 +1,39 @@
+{
+  "name": "gold-mine-optimizer",
+  "version": "1.0.0",
+  "description": "Comprehensive gold mining optimization application with AI-driven analytics and real-time monitoring",
+  "main": "src/server/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "nodemon src/server/index.js",
+    "client:dev": "vite",
+    "build": "vite build",
+    "test": "vitest",
+    "lint": "eslint src",
+    "start": "node src/server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.6",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "validator": "^13.11.0",
+    "chart.js": "^4.4.0",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "nodemon": "^3.0.2",
+    "concurrently": "^8.2.2",
+    "vitest": "^1.0.0",
+    "eslint": "^8.55.0"
+  },
+  "keywords": ["gold", "mining", "optimization", "ai", "analytics", "monitoring"],
+  "author": "Facilis",
+  "license": "MIT"
+}

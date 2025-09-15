@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Mine Optimizer - Advanced Mining Operations Management</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-gem"></i>
+                    <h1>Gold Mine Optimizer</h1>
+                </div>
+                <nav class="nav">
+                    <button class="nav-btn active" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </button>
+                    <button class="nav-btn" data-tab="equipment">
+                        <i class="fas fa-cogs"></i>
+                        Equipment
+                    </button>
+                    <button class="nav-btn" data-tab="production">
+                        <i class="fas fa-chart-line"></i>
+                        Production
+                    </button>
+                    <button class="nav-btn" data-tab="safety">
+                        <i class="fas fa-shield-alt"></i>
+                        Safety
+                    </button>
+                    <button class="nav-btn" data-tab="analytics">
+                        <i class="fas fa-brain"></i>
+                        AI Analytics
+                    </button>
+                </nav>
+                <div class="user-info">
+                    <span id="current-time"></span>
+                    <button class="alert-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="alert-count">3</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- KPI Cards -->
+                    <div class="kpi-section">
+                        <div class="kpi-card">
+                            <div class="kpi-icon gold">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <h3>Daily Production</h3>
+                                <div class="kpi-value" id="daily-production">24.7 oz</div>
+                                <div class="kpi-change positive">+12.5%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-icon blue">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <h3>Equipment Efficiency</h3>
+                                <div class="kpi-value" id="equipment-efficiency">87.3%</div>
+                                <div class="kpi-change positive">+3.2%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-icon green">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <h3>Cost Per Ounce</h3>
+                                <div class="kpi-value" id="cost-per-ounce">$1,247</div>
+                                <div class="kpi-change negative">-2.1%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-icon orange">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <h3>Safety Score</h3>
+                                <div class="kpi-value" id="safety-score">96.2</div>
+                                <div class="kpi-change positive">+1.8%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Production Chart -->
+                    <div class="chart-container">
+                        <h3>Production Trends (Last 30 Days)</h3>
+                        <canvas id="production-chart"></canvas>
+                    </div>
+
+                    <!-- Equipment Status -->
+                    <div class="equipment-status">
+                        <h3>Equipment Status</h3>
+                        <div class="equipment-list" id="equipment-status-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+
+                    <!-- Real-time Alerts -->
+                    <div class="alerts-panel">
+                        <h3>Real-time Alerts</h3>
+                        <div class="alert-list" id="alert-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Equipment Tab -->
+            <section id="equipment" class="tab-content">
+                <div class="equipment-grid">
+                    <div class="equipment-overview">
+                        <h3>Equipment Overview</h3>
+                        <div class="equipment-cards" id="equipment-cards">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                    
+                    <div class="maintenance-schedule">
+                        <h3>Maintenance Schedule</h3>
+                        <canvas id="maintenance-chart"></canvas>
+                    </div>
+
+                    <div class="equipment-details">
+                        <h3>Equipment Details</h3>
+                        <div class="equipment-table-container">
+                            <table class="equipment-table" id="equipment-table">
+                                <thead>
+                                    <tr>
+                                        <th>Equipment ID</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Efficiency</th>
+                                        <th>Next Maintenance</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="equipment-table-body">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Tab -->
+            <section id="production" class="tab-content">
+                <div class="production-grid">
+                    <div class="production-metrics">
+                        <h3>Production Metrics</h3>
+                        <canvas id="production-metrics-chart"></canvas>
+                    </div>
+                    
+                    <div class="ore-analysis">
+                        <h3>Ore Grade Analysis</h3>
+                        <canvas id="ore-grade-chart"></canvas>
+                    </div>
+
+                    <div class="optimization-suggestions">
+                        <h3>AI Optimization Suggestions</h3>
+                        <div class="suggestions-list" id="optimization-suggestions">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Safety Tab -->
+            <section id="safety" class="tab-content">
+                <div class="safety-grid">
+                    <div class="safety-metrics">
+                        <h3>Safety Metrics</h3>
+                        <div class="safety-cards">
+                            <div class="safety-card">
+                                <h4>Days Without Incident</h4>
+                                <div class="safety-value">127</div>
+                            </div>
+                            <div class="safety-card">
+                                <h4>Safety Training Completion</h4>
+                                <div class="safety-value">94%</div>
+                            </div>
+                            <div class="safety-card">
+                                <h4>PPE Compliance</h4>
+                                <div class="safety-value">98.7%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="safety-incidents">
+                        <h3>Recent Safety Reports</h3>
+                        <div class="incidents-list" id="safety-incidents">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+
+                    <div class="environmental-monitoring">
+                        <h3>Environmental Monitoring</h3>
+                        <canvas id="environmental-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Analytics Tab -->
+            <section id="analytics" class="tab-content">
+                <div class="analytics-grid">
+                    <div class="ai-predictions">
+                        <h3>AI Predictions & Insights</h3>
+                        <div class="prediction-cards" id="ai-predictions">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                    
+                    <div class="optimization-engine">
+                        <h3>Optimization Engine</h3>
+                        <canvas id="optimization-chart"></canvas>
+                    </div>
+
+                    <div class="ml-models">
+                        <h3>Machine Learning Models</h3>
+                        <div class="model-performance" id="ml-models">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal for Equipment Details -->
+        <div id="equipment-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Equipment Details</h2>
+                <div id="equipment-modal-content">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading optimization data...</p>
+        </div>
+    </div>
+
+    <script type="module" src="src/js/main.js"></script>
+</body>
+</html>
