@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copper Mine Operations Optimizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1><i class="fas fa-mountain"></i> Copper Mine Optimizer</h1>
+            <div class="status-bar">
+                <span class="status-item">
+                    <i class="fas fa-circle status-active"></i>
+                    System Online
+                </span>
+                <span class="status-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="current-time"></span>
+                </span>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </li>
+                <li class="nav-item" data-section="production">
+                    <i class="fas fa-industry"></i>
+                    Production
+                </li>
+                <li class="nav-item" data-section="equipment">
+                    <i class="fas fa-cogs"></i>
+                    Equipment
+                </li>
+                <li class="nav-item" data-section="ore-grade">
+                    <i class="fas fa-gem"></i>
+                    Ore Grade
+                </li>
+                <li class="nav-item" data-section="energy">
+                    <i class="fas fa-bolt"></i>
+                    Energy
+                </li>
+                <li class="nav-item" data-section="safety">
+                    <i class="fas fa-hard-hat"></i>
+                    Safety
+                </li>
+                <li class="nav-item" data-section="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2>Operations Dashboard</h2>
+                    <button class="btn btn-primary" onclick="refreshDashboard()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card kpi-card">
+                        <div class="card-header">
+                            <h3>Daily Production</h3>
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="kpi-value">
+                            <span id="daily-production">2,450</span>
+                            <span class="kpi-unit">tons</span>
+                        </div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +5.2%
+                        </div>
+                    </div>
+
+                    <div class="card kpi-card">
+                        <div class="card-header">
+                            <h3>Copper Grade</h3>
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="kpi-value">
+                            <span id="copper-grade">1.85</span>
+                            <span class="kpi-unit">%</span>
+                        </div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +0.12%
+                        </div>
+                    </div>
+
+                    <div class="card kpi-card">
+                        <div class="card-header">
+                            <h3>Equipment Efficiency</h3>
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="kpi-value">
+                            <span id="equipment-efficiency">87.3</span>
+                            <span class="kpi-unit">%</span>
+                        </div>
+                        <div class="kpi-change negative">
+                            <i class="fas fa-arrow-down"></i> -2.1%
+                        </div>
+                    </div>
+
+                    <div class="card kpi-card">
+                        <div class="card-header">
+                            <h3>Energy Cost</h3>
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="kpi-value">
+                            <span id="energy-cost">$15,240</span>
+                            <span class="kpi-unit">/day</span>
+                        </div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-down"></i> -3.8%
+                        </div>
+                    </div>
+
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Production Trends</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="production-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card alert-card">
+                        <div class="card-header">
+                            <h3>Active Alerts</h3>
+                        </div>
+                        <div class="alert-list" id="alert-list">
+                            <div class="alert warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Crusher 2 efficiency below optimal (82%)
+                            </div>
+                            <div class="alert info">
+                                <i class="fas fa-info-circle"></i>
+                                Scheduled maintenance for Mill A at 14:00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Section -->
+            <section id="production" class="section">
+                <div class="section-header">
+                    <h2>Production Monitoring</h2>
+                </div>
+
+                <div class="production-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Real-time Production</h3>
+                        </div>
+                        <div class="production-metrics">
+                            <div class="metric">
+                                <label>Current Rate:</label>
+                                <span id="current-rate">102 tons/hour</span>
+                            </div>
+                            <div class="metric">
+                                <label>Target Rate:</label>
+                                <span>110 tons/hour</span>
+                            </div>
+                            <div class="metric">
+                                <label>Efficiency:</label>
+                                <span id="production-efficiency">92.7%</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 92.7%"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Optimization Recommendations</h3>
+                        </div>
+                        <div class="recommendations" id="recommendations">
+                            <div class="recommendation">
+                                <i class="fas fa-lightbulb"></i>
+                                Increase feed rate by 5% to reach target production
+                            </div>
+                            <div class="recommendation">
+                                <i class="fas fa-wrench"></i>
+                                Schedule maintenance for Conveyor Belt 3 during next shutdown
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Equipment Section -->
+            <section id="equipment" class="section">
+                <div class="section-header">
+                    <h2>Equipment Monitoring</h2>
+                </div>
+
+                <div class="equipment-grid">
+                    <div class="equipment-item">
+                        <div class="equipment-header">
+                            <h4>Crusher Unit A</h4>
+                            <span class="status-badge operational">Operational</span>
+                        </div>
+                        <div class="equipment-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Efficiency:</span>
+                                <span class="metric-value">94%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Temperature:</span>
+                                <span class="metric-value">65°C</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Vibration:</span>
+                                <span class="metric-value">Normal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="equipment-item">
+                        <div class="equipment-header">
+                            <h4>Grinding Mill B</h4>
+                            <span class="status-badge maintenance">Maintenance</span>
+                        </div>
+                        <div class="equipment-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Efficiency:</span>
+                                <span class="metric-value">0%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Temperature:</span>
+                                <span class="metric-value">25°C</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Status:</span>
+                                <span class="metric-value">Offline</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="equipment-item">
+                        <div class="equipment-header">
+                            <h4>Flotation Cell 1</h4>
+                            <span class="status-badge warning">Warning</span>
+                        </div>
+                        <div class="equipment-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Efficiency:</span>
+                                <span class="metric-value">82%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">pH Level:</span>
+                                <span class="metric-value">8.2</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Flow Rate:</span>
+                                <span class="metric-value">245 L/min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ore Grade Section -->
+            <section id="ore-grade" class="section">
+                <div class="section-header">
+                    <h2>Ore Grade Optimization</h2>
+                </div>
+
+                <div class="ore-grade-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Grade Calculator</h3>
+                        </div>
+                        <div class="calculator-form">
+                            <div class="form-group">
+                                <label for="sample-weight">Sample Weight (kg):</label>
+                                <input type="number" id="sample-weight" value="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="copper-content">Copper Content (kg):</label>
+                                <input type="number" id="copper-content" step="0.01" value="1.85">
+                            </div>
+                            <button class="btn btn-primary" onclick="calculateGrade()">Calculate Grade</button>
+                            <div class="result" id="grade-result">
+                                Copper Grade: <strong>1.85%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Grade Distribution</h3>
+                        </div>
+                        <div class="grade-chart">
+                            <canvas id="grade-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Energy Section -->
+            <section id="energy" class="section">
+                <div class="section-header">
+                    <h2>Energy Management</h2>
+                </div>
+
+                <div class="energy-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Energy Consumption</h3>
+                        </div>
+                        <div class="energy-metrics">
+                            <div class="metric-large">
+                                <span class="metric-value">1,240</span>
+                                <span class="metric-unit">kWh</span>
+                                <span class="metric-label">Current Hour</span>
+                            </div>
+                            <div class="metric-large">
+                                <span class="metric-value">28,950</span>
+                                <span class="metric-unit">kWh</span>
+                                <span class="metric-label">Daily Total</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Cost Optimization</h3>
+                        </div>
+                        <div class="cost-analysis">
+                            <div class="cost-item">
+                                <span class="cost-label">Peak Hours Cost:</span>
+                                <span class="cost-value">$8,240</span>
+                            </div>
+                            <div class="cost-item">
+                                <span class="cost-label">Off-Peak Cost:</span>
+                                <span class="cost-value">$7,000</span>
+                            </div>
+                            <div class="cost-item savings">
+                                <span class="cost-label">Potential Savings:</span>
+                                <span class="cost-value">$1,840/day</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Safety Section -->
+            <section id="safety" class="section">
+                <div class="section-header">
+                    <h2>Safety Monitoring</h2>
+                </div>
+
+                <div class="safety-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Safety Metrics</h3>
+                        </div>
+                        <div class="safety-metrics">
+                            <div class="safety-metric">
+                                <span class="metric-value">156</span>
+                                <span class="metric-label">Days Without Incident</span>
+                            </div>
+                            <div class="safety-metric">
+                                <span class="metric-value">98.5%</span>
+                                <span class="metric-label">Safety Compliance</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Environmental Monitoring</h3>
+                        </div>
+                        <div class="env-metrics">
+                            <div class="env-item">
+                                <span class="env-label">Air Quality Index:</span>
+                                <span class="env-value good">Good (42)</span>
+                            </div>
+                            <div class="env-item">
+                                <span class="env-label">Water pH:</span>
+                                <span class="env-value normal">7.2</span>
+                            </div>
+                            <div class="env-item">
+                                <span class="env-label">Noise Level:</span>
+                                <span class="env-value normal">78 dB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="section">
+                <div class="section-header">
+                    <h2>Reports & Analytics</h2>
+                </div>
+
+                <div class="reports-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Generate Report</h3>
+                        </div>
+                        <div class="report-form">
+                            <div class="form-group">
+                                <label for="report-type">Report Type:</label>
+                                <select id="report-type">
+                                    <option>Daily Production</option>
+                                    <option>Equipment Performance</option>
+                                    <option>Energy Analysis</option>
+                                    <option>Safety Summary</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="date-range">Date Range:</label>
+                                <input type="date" id="start-date">
+                                <input type="date" id="end-date">
+                            </div>
+                            <button class="btn btn-primary" onclick="generateReport()">
+                                <i class="fas fa-file-pdf"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
