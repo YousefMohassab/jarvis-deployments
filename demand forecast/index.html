@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corn Syrup Demand Forecasting</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌽 Corn Syrup Demand Forecasting System</h1>
+            <p>Advanced production planning and demand prediction</p>
+        </header>
+
+        <main>
+            <div class="dashboard-grid">
+                <!-- Data Input Section -->
+                <div class="card">
+                    <h2>Historical Data Input</h2>
+                    <form id="data-form">
+                        <div class="form-group">
+                            <label for="data-period">Data Period:</label>
+                            <select id="data-period">
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="quarterly">Quarterly</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="historical-data">Historical Production Data (CSV format):</label>
+                            <textarea id="historical-data" placeholder="Date,Production(tons),Price($),Demand(tons)
+2023-01-01,1200,45.5,1180
+2023-02-01,1350,46.2,1320
+2023-03-01,1400,47.1,1380"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="seasonal-factors">Seasonal Factors:</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="seasonal-holiday" checked> Holiday Impact</label>
+                                <label><input type="checkbox" id="seasonal-weather" checked> Weather Patterns</label>
+                                <label><input type="checkbox" id="seasonal-market" checked> Market Cycles</label>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="processData()">Process Data</button>
+                    </form>
+                </div>
+
+                <!-- Forecasting Controls -->
+                <div class="card">
+                    <h2>Forecasting Parameters</h2>
+                    <div class="form-group">
+                        <label for="forecast-method">Forecasting Method:</label>
+                        <select id="forecast-method">
+                            <option value="linear">Linear Regression</option>
+                            <option value="exponential">Exponential Smoothing</option>
+                            <option value="moving-average">Moving Average</option>
+                            <option value="seasonal">Seasonal Decomposition</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="forecast-periods">Forecast Periods:</label>
+                        <input type="number" id="forecast-periods" value="12" min="1" max="60">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confidence-level">Confidence Level:</label>
+                        <select id="confidence-level">
+                            <option value="80">80%</option>
+                            <option value="90" selected>90%</option>
+                            <option value="95">95%</option>
+                        </select>
+                    </div>
+
+                    <button type="button" onclick="generateForecast()" class="primary-btn">Generate Forecast</button>
+                </div>
+
+                <!-- Current Metrics -->
+                <div class="card metrics">
+                    <h2>Current Production Metrics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-value" id="current-production">0</span>
+                            <span class="metric-label">Current Production (tons)</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="avg-demand">0</span>
+                            <span class="metric-label">Avg Monthly Demand</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="forecast-accuracy">0%</span>
+                            <span class="metric-label">Forecast Accuracy</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="trend-direction">--</span>
+                            <span class="metric-label">Trend Direction</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="card chart-container">
+                <h2>Demand Forecast Visualization</h2>
+                <div class="chart-controls">
+                    <button type="button" onclick="toggleChart('demand')" class="chart-btn active">Demand</button>
+                    <button type="button" onclick="toggleChart('production')" class="chart-btn">Production</button>
+                    <button type="button" onclick="toggleChart('price')" class="chart-btn">Price Trends</button>
+                </div>
+                <canvas id="forecast-chart"></canvas>
+            </div>
+
+            <!-- Forecast Results -->
+            <div class="card">
+                <h2>Forecast Results & Recommendations</h2>
+                <div id="forecast-results">
+                    <p>Please input historical data and generate a forecast to see results.</p>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" onclick="exportForecast()" class="export-btn">Export Forecast</button>
+                    <button type="button" onclick="generateReport()" class="report-btn">Generate Report</button>
+                </div>
+            </div>
+
+            <!-- Scenario Planning -->
+            <div class="card">
+                <h2>Scenario Planning</h2>
+                <div class="scenario-controls">
+                    <div class="form-group">
+                        <label for="scenario-demand">Demand Change (%):</label>
+                        <input type="range" id="scenario-demand" min="-50" max="50" value="0" oninput="updateScenario()">
+                        <span id="demand-value">0%</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="scenario-price">Price Change (%):</label>
+                        <input type="range" id="scenario-price" min="-30" max="30" value="0" oninput="updateScenario()">
+                        <span id="price-value">0%</span>
+                    </div>
+                    <div id="scenario-impact">
+                        <p>Projected Impact: <span id="impact-text">Baseline scenario</span></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="forecast-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
