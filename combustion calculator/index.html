@@ -4,383 +4,244 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Natural Gas Combustion Thermodynamics Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            font-weight: 300;
-        }
-        
-        .calculator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .input-section, .results-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .section-title {
-            font-size: 1.4em;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        .unit {
-            font-size: 0.9em;
-            color: #666;
-            margin-left: 5px;
-        }
-        
-        .calculate-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
-        }
-        
-        .calculate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-        }
-        
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 5px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .result-label {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .result-value {
-            font-weight: bold;
-            color: #e74c3c;
-            font-size: 1.1em;
-        }
-        
-        .equations-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            margin-top: 20px;
-        }
-        
-        .equation {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            border-left: 4px solid #27ae60;
-        }
-        
-        @media (max-width: 768px) {
-            .calculator-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/forms.css">
+    <link rel="stylesheet" href="src/css/charts.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Natural Gas Combustion Thermodynamics Calculator</h1>
-        
-        <div class="calculator-grid">
-            <div class="input-section">
-                <h2 class="section-title">Input Parameters</h2>
-                
-                <div class="input-group">
-                    <label for="fuelFlow">Natural Gas Flow Rate <span class="unit">(m³/h)</span></label>
-                    <input type="number" id="fuelFlow" step="0.1" value="100">
-                </div>
-                
-                <div class="input-group">
-                    <label for="airTemp">Air Temperature <span class="unit">(°C)</span></label>
-                    <input type="number" id="airTemp" step="0.1" value="25">
-                </div>
-                
-                <div class="input-group">
-                    <label for="fuelTemp">Fuel Temperature <span class="unit">(°C)</span></label>
-                    <input type="number" id="fuelTemp" step="0.1" value="15">
-                </div>
-                
-                <div class="input-group">
-                    <label for="excessAir">Excess Air <span class="unit">(%)</span></label>
-                    <input type="number" id="excessAir" step="1" value="20">
-                </div>
-                
-                <div class="input-group">
-                    <label for="pressure">Operating Pressure <span class="unit">(bar)</span></label>
-                    <input type="number" id="pressure" step="0.1" value="1.013">
-                </div>
-                
-                <div class="input-group">
-                    <label for="methaneContent">Methane Content <span class="unit">(%)</span></label>
-                    <input type="number" id="methaneContent" step="0.1" value="95" max="100">
-                </div>
-                
-                <button class="calculate-btn" onclick="calculateCombustion()">Calculate Thermodynamics</button>
-            </div>
-            
-            <div class="results-section">
-                <h2 class="section-title">Results</h2>
-                <div id="results">
-                    <div class="result-item">
-                        <span class="result-label">Click Calculate to see results</span>
-                        <span class="result-value">-</span>
+        <header>
+            <h1>Natural Gas Combustion Thermodynamics Calculator</h1>
+            <p>Comprehensive analysis of natural gas/air combustion processes</p>
+        </header>
+
+        <main>
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <section class="input-panel">
+                    <h2>Input Parameters</h2>
+                    
+                    <div class="input-group">
+                        <h3>Fuel Composition</h3>
+                        <div class="form-row">
+                            <label for="ch4">Methane (CH₄) %:</label>
+                            <input type="number" id="ch4" value="95" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="c2h6">Ethane (C₂H₆) %:</label>
+                            <input type="number" id="c2h6" value="3" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="c3h8">Propane (C₃H₈) %:</label>
+                            <input type="number" id="c3h8" value="1" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="c4h10">Butane (C₄H₁₀) %:</label>
+                            <input type="number" id="c4h10" value="0.5" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="co2">Carbon Dioxide (CO₂) %:</label>
+                            <input type="number" id="co2" value="0.5" min="0" max="100" step="0.1">
+                        </div>
                     </div>
-                </div>
+
+                    <div class="input-group">
+                        <h3>Operating Conditions</h3>
+                        <div class="form-row">
+                            <label for="fuel-temp">Fuel Temperature (°C):</label>
+                            <input type="number" id="fuel-temp" value="25" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="air-temp">Air Temperature (°C):</label>
+                            <input type="number" id="air-temp" value="25" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="pressure">Pressure (bar):</label>
+                            <input type="number" id="pressure" value="1.013" min="0.1" step="0.001">
+                        </div>
+                        <div class="form-row">
+                            <label for="excess-air">Excess Air (%):</label>
+                            <input type="number" id="excess-air" value="20" min="0" max="500" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="fuel-flow">Fuel Flow Rate (kg/h):</label>
+                            <input type="number" id="fuel-flow" value="100" min="0.1" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <h3>Heat Transfer</h3>
+                        <div class="form-row">
+                            <label for="heat-loss">Heat Loss (%):</label>
+                            <input type="number" id="heat-loss" value="5" min="0" max="50" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label for="stack-temp">Stack Temperature (°C):</label>
+                            <input type="number" id="stack-temp" value="150" step="0.1">
+                        </div>
+                    </div>
+
+                    <button id="calculate-btn" class="calculate-button">Calculate</button>
+                    <button id="reset-btn" class="reset-button">Reset</button>
+                </section>
+
+                <!-- Results Panel -->
+                <section class="results-panel">
+                    <h2>Calculation Results</h2>
+                    
+                    <div class="results-tabs">
+                        <button class="tab-button active" data-tab="combustion">Combustion</button>
+                        <button class="tab-button" data-tab="thermodynamics">Thermodynamics</button>
+                        <button class="tab-button" data-tab="efficiency">Efficiency</button>
+                        <button class="tab-button" data-tab="emissions">Emissions</button>
+                    </div>
+
+                    <div id="combustion" class="tab-content active">
+                        <h3>Combustion Analysis</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <label>Stoichiometric Air-Fuel Ratio:</label>
+                                <span id="stoich-af-ratio">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Actual Air-Fuel Ratio:</label>
+                                <span id="actual-af-ratio">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Air Flow Rate (kg/h):</label>
+                                <span id="air-flow-rate">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Flue Gas Flow Rate (kg/h):</label>
+                                <span id="flue-gas-flow">-</span>
+                            </div>
+                        </div>
+                        
+                        <h4>Flue Gas Composition (% vol, dry)</h4>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <label>CO₂:</label>
+                                <span id="flue-co2">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>O₂:</label>
+                                <span id="flue-o2">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>N₂:</label>
+                                <span id="flue-n2">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>H₂O:</label>
+                                <span id="flue-h2o">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="thermodynamics" class="tab-content">
+                        <h3>Thermodynamic Properties</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <label>Lower Heating Value (MJ/kg):</label>
+                                <span id="lhv">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Higher Heating Value (MJ/kg):</label>
+                                <span id="hhv">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Adiabatic Flame Temperature (°C):</label>
+                                <span id="flame-temp">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Heat Released (MW):</label>
+                                <span id="heat-released">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Specific Heat Capacity (kJ/kg·K):</label>
+                                <span id="cp-flue-gas">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Flue Gas Density (kg/m³):</label>
+                                <span id="flue-gas-density">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="efficiency" class="tab-content">
+                        <h3>Efficiency Analysis</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <label>Thermal Efficiency (%):</label>
+                                <span id="thermal-efficiency">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Combustion Efficiency (%):</label>
+                                <span id="combustion-efficiency">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Stack Loss (%):</label>
+                                <span id="stack-loss">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Radiation Loss (%):</label>
+                                <span id="radiation-loss">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Useful Heat Output (MW):</label>
+                                <span id="useful-heat">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="emissions" class="tab-content">
+                        <h3>Emissions Analysis</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <label>CO₂ Emissions (kg/h):</label>
+                                <span id="co2-emissions">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>NOₓ Estimate (ppm):</label>
+                                <span id="nox-emissions">-</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Specific CO₂ (kg/MWh):</label>
+                                <span id="specific-co2">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Visualization Panel -->
+                <section class="visualization-panel">
+                    <h2>Visualization</h2>
+                    <div class="chart-container">
+                        <canvas id="compositionChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </section>
             </div>
-        </div>
-        
-        <div class="equations-section">
-            <h2 class="section-title">Combustion Equations & Theory</h2>
-            <div class="equation">
-                <strong>Complete Combustion:</strong><br>
-                CH₄ + 2O₂ → CO₂ + 2H₂O
-            </div>
-            <div class="equation">
-                <strong>Stoichiometric Air-Fuel Ratio:</strong><br>
-                AFR = 9.52 kg air/kg CH₄ (theoretical)
-            </div>
-            <div class="equation">
-                <strong>Lower Heating Value (LHV):</strong><br>
-                LHV_CH₄ = 50.02 MJ/kg = 35.88 MJ/m³
-            </div>
-            <div class="equation">
-                <strong>Adiabatic Flame Temperature:</strong><br>
-                T_ad = T₀ + (LHV × η_combustion) / (m_products × Cp_avg)
-            </div>
-        </div>
+        </main>
+
+        <footer>
+            <p>Natural Gas Combustion Calculator - Advanced Thermodynamic Analysis</p>
+        </footer>
     </div>
 
-    <script>
-        // Thermodynamic properties and constants
-        const CONSTANTS = {
-            LHV_CH4: 35.88, // MJ/m³ (Lower Heating Value of methane)
-            R_UNIVERSAL: 8.314, // J/(mol·K)
-            MW_CH4: 16.04, // g/mol
-            MW_AIR: 28.97, // g/mol
-            MW_CO2: 44.01, // g/mol
-            MW_H2O: 18.015, // g/mol
-            MW_N2: 28.014, // g/mol
-            CP_AIR: 1.005, // kJ/(kg·K) at 25°C
-            CP_CO2: 0.846, // kJ/(kg·K) at 25°C
-            CP_H2O: 2.080, // kJ/(kg·K) at 25°C
-            CP_N2: 1.040, // kJ/(kg·K) at 25°C
-            STOICH_AIR_FUEL: 9.52 // kg air/kg CH4
-        };
-
-        function calculateCombustion() {
-            // Get input values
-            const fuelFlow = parseFloat(document.getElementById('fuelFlow').value); // m³/h
-            const airTemp = parseFloat(document.getElementById('airTemp').value); // °C
-            const fuelTemp = parseFloat(document.getElementById('fuelTemp').value); // °C
-            const excessAir = parseFloat(document.getElementById('excessAir').value); // %
-            const pressure = parseFloat(document.getElementById('pressure').value); // bar
-            const methaneContent = parseFloat(document.getElementById('methaneContent').value); // %
-
-            // Convert temperatures to Kelvin
-            const T_air = airTemp + 273.15;
-            const T_fuel = fuelTemp + 273.15;
-
-            // Calculate fuel mass flow rate (kg/h)
-            // At standard conditions: 1 m³ of CH4 ≈ 0.717 kg
-            const fuelDensity = (pressure * 100) * CONSTANTS.MW_CH4 / (CONSTANTS.R_UNIVERSAL * T_fuel); // kg/m³
-            const fuelMassFlow = fuelFlow * fuelDensity / 1000; // kg/h
-
-            // Calculate effective LHV based on methane content
-            const effectiveLHV = CONSTANTS.LHV_CH4 * (methaneContent / 100); // MJ/m³
-
-            // Calculate theoretical air requirement
-            const theoreticalAirMass = fuelMassFlow * CONSTANTS.STOICH_AIR_FUEL; // kg/h
-
-            // Calculate actual air flow with excess air
-            const actualAirMass = theoreticalAirMass * (1 + excessAir / 100); // kg/h
-
-            // Calculate heat input
-            const heatInput = fuelFlow * effectiveLHV * 1000; // kJ/h
-
-            // Calculate combustion products
-            // For CH4: 1 mol CH4 → 1 mol CO2 + 2 mol H2O
-            const molCH4 = (fuelMassFlow * methaneContent / 100) / CONSTANTS.MW_CH4 * 1000; // mol/h
-            const molCO2 = molCH4; // mol/h
-            const molH2O = 2 * molCH4; // mol/h
-
-            // Calculate product masses
-            const massCO2 = molCO2 * CONSTANTS.MW_CO2 / 1000; // kg/h
-            const massH2O = molH2O * CONSTANTS.MW_H2O / 1000; // kg/h
-            
-            // Calculate excess air and nitrogen
-            const excessAirMass = actualAirMass - theoreticalAirMass; // kg/h
-            const nitrogenMass = actualAirMass * 0.77; // kg/h (approximately 77% of air)
-
-            // Calculate total product mass
-            const totalProductMass = massCO2 + massH2O + nitrogenMass + excessAirMass * 0.23; // kg/h
-
-            // Calculate average specific heat of products
-            const cpAvg = (massCO2 * CONSTANTS.CP_CO2 + massH2O * CONSTANTS.CP_H2O + 
-                          nitrogenMass * CONSTANTS.CP_N2 + excessAirMass * 0.23 * CONSTANTS.CP_AIR) / 
-                          totalProductMass; // kJ/(kg·K)
-
-            // Estimate adiabatic flame temperature (simplified)
-            const combustionEfficiency = 0.98; // Assume 98% efficiency
-            const adiabaticTemp = T_air + (heatInput * combustionEfficiency) / (totalProductMass * cpAvg); // K
-
-            // Convert back to Celsius
-            const flameTempC = adiabaticTemp - 273.15;
-
-            // Calculate air-fuel ratio
-            const airFuelRatio = actualAirMass / fuelMassFlow;
-
-            // Calculate combustion intensity
-            const combustionIntensity = heatInput / fuelFlow; // kJ/m³
-
-            // Calculate excess oxygen
-            const excessO2Percent = (excessAir / 100) * 21 / (1 + excessAir / 100); // %
-
-            // Display results
-            displayResults({
-                heatInput: heatInput.toFixed(0),
-                fuelMassFlow: fuelMassFlow.toFixed(2),
-                airMassFlow: actualAirMass.toFixed(1),
-                airFuelRatio: airFuelRatio.toFixed(2),
-                adiabaticTemp: flameTempC.toFixed(0),
-                co2Production: massCO2.toFixed(2),
-                h2oProduction: massH2O.toFixed(2),
-                flueGasFlow: totalProductMass.toFixed(1),
-                combustionIntensity: combustionIntensity.toFixed(0),
-                excessO2: excessO2Percent.toFixed(1),
-                thermalPower: (heatInput / 3600).toFixed(2) // MW
-            });
-        }
-
-        function displayResults(results) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <div class="result-item">
-                    <span class="result-label">Heat Input</span>
-                    <span class="result-value">${results.heatInput} kJ/h</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Thermal Power</span>
-                    <span class="result-value">${results.thermalPower} MW</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Fuel Mass Flow</span>
-                    <span class="result-value">${results.fuelMassFlow} kg/h</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Air Mass Flow</span>
-                    <span class="result-value">${results.airMassFlow} kg/h</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Air-Fuel Ratio</span>
-                    <span class="result-value">${results.airFuelRatio} kg/kg</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Adiabatic Flame Temperature</span>
-                    <span class="result-value">${results.adiabaticTemp} °C</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">CO₂ Production</span>
-                    <span class="result-value">${results.co2Production} kg/h</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">H₂O Production</span>
-                    <span class="result-value">${results.h2oProduction} kg/h</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Flue Gas Flow</span>
-                    <span class="result-value">${results.flueGasFlow} kg/h</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Combustion Intensity</span>
-                    <span class="result-value">${results.combustionIntensity} kJ/m³</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Excess O₂</span>
-                    <span class="result-value">${results.excessO2} %</span>
-                </div>
-            `;
-        }
-
-        // Initialize with default calculation
-        window.onload = function() {
-            calculateCombustion();
-        };
-    </script>
+    <!-- Load all JavaScript modules -->
+    <script src="src/data/constants.js"></script>
+    <script src="src/data/gas-data.js"></script>
+    <script src="src/js/validators.js"></script>
+    <script src="src/js/gas-properties.js"></script>
+    <script src="src/js/combustion.js"></script>
+    <script src="src/js/thermodynamics.js"></script>
+    <script src="src/js/heat-transfer.js"></script>
+    <script src="src/js/efficiency.js"></script>
+    <script src="src/js/chart-utils.js"></script>
+    <script src="src/js/calculator-core.js"></script>
 </body>
 </html>
