@@ -1,0 +1,29 @@
+{
+  "name": "quick-test-app",
+  "version": "1.0.0",
+  "description": "A quick test application for demonstrating web development concepts",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -s . -p ${PORT:-8500}",
+    "dev": "npx live-server --port=${PORT:-8500} --no-browser",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "test",
+    "web",
+    "html",
+    "javascript",
+    "css",
+    "static"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

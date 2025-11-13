@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Quick Test App - A professional testing dashboard for rapid application testing and scenario management">
+    <meta name="keywords" content="test, dashboard, testing, scenarios">
+    <meta name="author" content="JarvisII">
+    <title>Quick Test App</title>
+    <link rel="stylesheet" href="src/css/main.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="app-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="app-title">Quick Test App</h1>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#scenarios">Test Scenarios</a></li>
+                        <li><a href="#results">Results</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Dashboard Overview -->
+            <section id="dashboard" class="dashboard-section">
+                <h2>Dashboard Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Tests</h3>
+                        <p class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Passed</h3>
+                        <p class="stat-value success">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Failed</h3>
+                        <p class="stat-value error">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending</h3>
+                        <p class="stat-value warning">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Test Scenarios Section -->
+            <section id="scenarios" class="scenarios-section">
+                <div class="section-header">
+                    <h2>Test Scenarios</h2>
+                    <button class="btn btn-primary">Add New Scenario</button>
+                </div>
+
+                <div class="scenarios-list">
+                    <article class="scenario-card">
+                        <div class="scenario-header">
+                            <h3>Scenario 1: Login Functionality</h3>
+                            <span class="status-badge pending">Pending</span>
+                        </div>
+                        <p class="scenario-description">
+                            Test the user login functionality with valid and invalid credentials.
+                        </p>
+                        <div class="scenario-actions">
+                            <button class="btn btn-small btn-success">Run Test</button>
+                            <button class="btn btn-small btn-secondary">Edit</button>
+                            <button class="btn btn-small btn-danger">Delete</button>
+                        </div>
+                    </article>
+
+                    <article class="scenario-card">
+                        <div class="scenario-header">
+                            <h3>Scenario 2: Data Validation</h3>
+                            <span class="status-badge pending">Pending</span>
+                        </div>
+                        <p class="scenario-description">
+                            Validate form input fields with various data types and edge cases.
+                        </p>
+                        <div class="scenario-actions">
+                            <button class="btn btn-small btn-success">Run Test</button>
+                            <button class="btn btn-small btn-secondary">Edit</button>
+                            <button class="btn btn-small btn-danger">Delete</button>
+                        </div>
+                    </article>
+
+                    <article class="scenario-card">
+                        <div class="scenario-header">
+                            <h3>Scenario 3: API Integration</h3>
+                            <span class="status-badge pending">Pending</span>
+                        </div>
+                        <p class="scenario-description">
+                            Test API endpoints for proper request/response handling and error management.
+                        </p>
+                        <div class="scenario-actions">
+                            <button class="btn btn-small btn-success">Run Test</button>
+                            <button class="btn btn-small btn-secondary">Edit</button>
+                            <button class="btn btn-small btn-danger">Delete</button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Test Results Section -->
+            <section id="results" class="results-section">
+                <h2>Recent Test Results</h2>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Status</th>
+                                <th>Duration</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="empty-state">No test results available yet. Run a test to see results here.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="app-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Quick Test App. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#documentation">Documentation</a>
+                    <a href="#support">Support</a>
+                    <a href="#about">About</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="src/js/main.js"></script>
+</body>
+</html>

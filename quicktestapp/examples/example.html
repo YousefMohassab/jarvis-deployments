@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Quick Test App - Usage Examples and Documentation">
+    <meta name="keywords" content="test, examples, documentation, API, usage">
+    <meta name="author" content="JarvisII">
+    <title>Quick Test App - Usage Examples</title>
+    <link rel="stylesheet" href="../src/css/main.css">
+    <style>
+        /* Additional styles for example page */
+        .example-code {
+            background-color: var(--color-gray-900);
+            color: var(--color-gray-100);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            overflow-x: auto;
+            margin: var(--spacing-md) 0;
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            border: 1px solid var(--color-gray-700);
+        }
+
+        .example-code pre {
+            margin: 0;
+        }
+
+        .example-code .comment {
+            color: var(--color-gray-400);
+        }
+
+        .example-code .keyword {
+            color: #f59e0b;
+        }
+
+        .example-code .string {
+            color: #10b981;
+        }
+
+        .example-code .function {
+            color: #3b82f6;
+        }
+
+        .example-code .number {
+            color: #ef4444;
+        }
+
+        .section-divider {
+            margin: var(--spacing-3xl) 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--color-gray-300), transparent);
+        }
+
+        .example-section {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+            border: 2px dashed var(--color-gray-300);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-3xl);
+            text-align: center;
+            color: var(--color-gray-500);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .screenshot-placeholder svg {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: var(--spacing-3xl);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-left: 2px solid var(--color-gray-200);
+        }
+
+        .step-list li:last-child {
+            border-left-color: transparent;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -14px;
+            top: 0;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+        }
+
+        .api-method {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            margin-right: var(--spacing-sm);
+        }
+
+        .api-method.get {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--color-success-dark);
+        }
+
+        .api-method.post {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--color-primary-dark);
+        }
+
+        .api-method.delete {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--color-error-dark);
+        }
+
+        .inline-code {
+            background-color: var(--color-gray-100);
+            padding: 0.125rem 0.375rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-family-mono);
+            font-size: 0.9em;
+            color: var(--color-gray-800);
+        }
+
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--spacing-lg) 0;
+            font-size: var(--font-size-sm);
+        }
+
+        .example-table thead {
+            background-color: var(--color-gray-50);
+        }
+
+        .example-table th,
+        .example-table td {
+            padding: var(--spacing-md);
+            text-align: left;
+            border: 1px solid var(--color-gray-200);
+        }
+
+        .example-table th {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-gray-700);
+        }
+
+        .example-table td {
+            color: var(--color-gray-600);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-primary);
+            font-weight: var(--font-weight-medium);
+            margin-bottom: var(--spacing-lg);
+            transition: gap var(--transition-fast);
+        }
+
+        .back-link:hover {
+            gap: var(--spacing-md);
+        }
+
+        .highlight-box {
+            background-color: rgba(37, 99, 235, 0.05);
+            border-left: 4px solid var(--color-primary);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            border-radius: var(--radius-md);
+        }
+
+        .warning-box {
+            background-color: rgba(245, 158, 11, 0.05);
+            border-left: 4px solid var(--color-warning);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            border-radius: var(--radius-md);
+        }
+
+        .success-box {
+            background-color: rgba(16, 185, 129, 0.05);
+            border-left: 4px solid var(--color-success);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            border-radius: var(--radius-md);
+        }
+
+        .badge-inline {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            border-radius: var(--radius-sm);
+            background-color: var(--color-gray-100);
+            color: var(--color-gray-700);
+        }
+
+        .badge-inline.success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--color-success-dark);
+        }
+
+        .badge-inline.error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--color-error-dark);
+        }
+
+        .badge-inline.warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning-dark);
+        }
+
+        .toc {
+            background-color: var(--color-gray-50);
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .toc ul {
+            padding-left: var(--spacing-lg);
+        }
+
+        .toc li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .toc a {
+            color: var(--color-primary);
+            transition: color var(--transition-fast);
+        }
+
+        .toc a:hover {
+            color: var(--color-primary-dark);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-logo">
+                <svg class="header-logo-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Quick Test App</span>
+            </div>
+            <nav class="header-nav">
+                <a href="../index.html">Dashboard</a>
+                <a href="#examples" class="active">Examples</a>
+                <a href="#api-reference">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <a href="../index.html" class="back-link">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Application
+            </a>
+
+            <div class="page-header">
+                <h1 class="page-title">Usage Examples & Documentation</h1>
+                <p class="page-description">
+                    Comprehensive guide to using the Quick Test App for testing, validation, and monitoring your applications.
+                    Learn through examples, code snippets, and best practices.
+                </p>
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3>Table of Contents</h3>
+                <ul>
+                    <li><a href="#running-single-test">Running a Single Test</a></li>
+                    <li><a href="#running-all-tests">Running All Tests</a></li>
+                    <li><a href="#viewing-results">Viewing Results</a></li>
+                    <li><a href="#exporting-data">Exporting Data</a></li>
+                    <li><a href="#localstorage">Using localStorage</a></li>
+                    <li><a href="#test-states">Understanding Test States</a></li>
+                    <li><a href="#api-reference">API Reference</a></li>
+                    <li><a href="#best-practices">Best Practices</a></li>
+                </ul>
+            </div>
+
+            <!-- Example Section 1: Running a Single Test -->
+            <section id="running-single-test" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">1. Running a Single Test</h2>
+                        <p class="card-subtitle">Execute individual test scenarios and monitor their results</p>
+                    </div>
+                    <div class="card-body">
+                        <p>To run a single test, click the "Run Test" button on any test scenario card. The application will execute the test and display results in real-time.</p>
+
+                        <h4>JavaScript Code Example</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Run a single test by ID</span>
+<span class="keyword">async function</span> <span class="function">runTest</span>(testId) {
+    <span class="keyword">const</span> test = appState.tests[testId];
+
+    <span class="comment">// Update status to running</span>
+    <span class="function">updateTestStatus</span>(testId, <span class="string">'running'</span>);
+
+    <span class="keyword">try</span> {
+        <span class="comment">// Simulate API call</span>
+        <span class="keyword">const</span> result = <span class="keyword">await</span> <span class="function">simulateAPICall</span>(test);
+
+        <span class="comment">// Update state with results</span>
+        appState.tests[testId] = {
+            ...test,
+            status: result.success ? <span class="string">'passed'</span> : <span class="string">'failed'</span>,
+            result: result,
+            executionTime: result.executionTime
+        };
+
+        <span class="comment">// Display results</span>
+        <span class="function">displayTestResult</span>(testId, result);
+    } <span class="keyword">catch</span> (error) {
+        console.<span class="function">error</span>(<span class="string">'Test failed:'</span>, error);
+    }
+}</pre>
+                        </div>
+
+                        <h4>Step-by-Step Walkthrough</h4>
+                        <ol class="step-list">
+                            <li>
+                                <strong>Locate Test Card</strong>
+                                <p>Find the test scenario you want to run on the dashboard. Each card displays the test name, description, and current status.</p>
+                            </li>
+                            <li>
+                                <strong>Click Run Test</strong>
+                                <p>Click the "Run Test" button. The button will change to show "Running..." and a loading indicator.</p>
+                            </li>
+                            <li>
+                                <strong>Monitor Progress</strong>
+                                <p>Watch the status badge update from "Pending" to "Running" and finally to either "Passed" or "Failed".</p>
+                            </li>
+                            <li>
+                                <strong>View Results</strong>
+                                <p>Results appear below the test description, including execution time, status code, and response data.</p>
+                            </li>
+                        </ol>
+
+                        <div class="screenshot-placeholder">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p>Screenshot: Running a single test scenario</p>
+                        </div>
+
+                        <div class="highlight-box">
+                            <strong>Expected Outcome:</strong> The test completes within 1-3 seconds, displaying either a success message with response data or an error message with diagnostic information.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Example Section 2: Running All Tests -->
+            <section id="running-all-tests" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">2. Running All Tests</h2>
+                        <p class="card-subtitle">Execute all test scenarios sequentially</p>
+                    </div>
+                    <div class="card-body">
+                        <p>The "Run All Tests" feature executes all configured test scenarios in sequence, providing a comprehensive overview of your application's health.</p>
+
+                        <h4>JavaScript Implementation</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Run all tests sequentially</span>
+<span class="keyword">async function</span> <span class="function">runAllTests</span>() {
+    <span class="keyword">if</span> (appState.isRunningAll) <span class="keyword">return</span>;
+
+    appState.isRunningAll = <span class="keyword">true</span>;
+
+    <span class="comment">// Iterate through all test scenarios</span>
+    <span class="keyword">for</span> (<span class="keyword">const</span> scenario <span class="keyword">of</span> TEST_SCENARIOS) {
+        <span class="keyword">await</span> <span class="function">runTest</span>(scenario.id);
+
+        <span class="comment">// Small delay for better UX</span>
+        <span class="keyword">await new</span> <span class="function">Promise</span>(resolve => <span class="function">setTimeout</span>(resolve, <span class="number">300</span>));
+    }
+
+    appState.isRunningAll = <span class="keyword">false</span>;
+    console.<span class="function">log</span>(<span class="string">'All tests completed'</span>);
+}</pre>
+                        </div>
+
+                        <h4>Usage Instructions</h4>
+                        <ol class="step-list">
+                            <li>
+                                <strong>Click "Run All Tests"</strong>
+                                <p>Locate the "Run All Tests" button at the top of the dashboard and click it.</p>
+                            </li>
+                            <li>
+                                <strong>Watch Sequential Execution</strong>
+                                <p>Tests run one after another. Each test card updates its status as it executes.</p>
+                            </li>
+                            <li>
+                                <strong>Review Dashboard Statistics</strong>
+                                <p>The dashboard statistics update in real-time showing total tests, passed, failed, and success rate.</p>
+                            </li>
+                        </ol>
+
+                        <div class="success-box">
+                            <strong>Performance Note:</strong> Tests run sequentially with a 300ms delay between each test for optimal user experience and to prevent overwhelming the system.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Example Section 3: Viewing Results -->
+            <section id="viewing-results" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">3. Viewing Results</h2>
+                        <p class="card-subtitle">Understanding test results and metrics</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Test results are displayed in multiple locations throughout the application, providing different levels of detail.</p>
+
+                        <h4>Result Locations</h4>
+                        <table class="example-table">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Information Displayed</th>
+                                    <th>Use Case</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Test Card</strong></td>
+                                    <td>Detailed result with status, execution time, and response data</td>
+                                    <td>Immediate feedback after test execution</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dashboard Stats</strong></td>
+                                    <td>Total tests, passed, failed, success rate</td>
+                                    <td>High-level overview of test suite health</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Results Table</strong></td>
+                                    <td>Historical results with timestamps</td>
+                                    <td>Tracking test performance over time</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Browser Console</strong></td>
+                                    <td>Detailed logs and debug information</td>
+                                    <td>Debugging and troubleshooting</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Result Object Structure</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Successful test result</span>
+{
+    <span class="string">"success"</span>: <span class="keyword">true</span>,
+    <span class="string">"status"</span>: <span class="number">200</span>,
+    <span class="string">"message"</span>: <span class="string">"Test passed successfully"</span>,
+    <span class="string">"executionTime"</span>: <span class="number">1234</span>,
+    <span class="string">"data"</span>: {
+        <span class="string">"endpoint"</span>: <span class="string">"/api/auth/login"</span>,
+        <span class="string">"method"</span>: <span class="string">"POST"</span>,
+        <span class="string">"responseTime"</span>: <span class="string">"1234ms"</span>,
+        <span class="string">"statusCode"</span>: <span class="number">200</span>,
+        <span class="string">"payload"</span>: {
+            <span class="string">"token"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+            <span class="string">"userId"</span>: <span class="string">"12345"</span>,
+            <span class="string">"expiresIn"</span>: <span class="number">3600</span>
+        }
+    }
+}
+
+<span class="comment">// Failed test result</span>
+{
+    <span class="string">"success"</span>: <span class="keyword">false</span>,
+    <span class="string">"status"</span>: <span class="number">500</span>,
+    <span class="string">"message"</span>: <span class="string">"Test failed"</span>,
+    <span class="string">"executionTime"</span>: <span class="number">892</span>,
+    <span class="string">"error"</span>: <span class="string">"Database connection failed"</span>
+}</pre>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <p>Screenshot: Dashboard statistics and results table</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Example Section 4: Exporting Data -->
+            <section id="exporting-data" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">4. Exporting Data</h2>
+                        <p class="card-subtitle">Export test results for analysis and reporting</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Export test results to JSON format for further analysis, reporting, or integration with other tools.</p>
+
+                        <h4>Export Function Implementation</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Export results as JSON file</span>
+<span class="keyword">function</span> <span class="function">exportResults</span>() {
+    <span class="keyword">const</span> data = {
+        tests: appState.tests,
+        history: appState.history,
+        exportDate: <span class="keyword">new</span> <span class="function">Date</span>().<span class="function">toISOString</span>()
+    };
+
+    <span class="keyword">const</span> blob = <span class="keyword">new</span> <span class="function">Blob</span>(
+        [JSON.<span class="function">stringify</span>(data, <span class="keyword">null</span>, <span class="number">2</span>)],
+        { type: <span class="string">'application/json'</span> }
+    );
+
+    <span class="keyword">const</span> url = URL.<span class="function">createObjectURL</span>(blob);
+    <span class="keyword">const</span> a = document.<span class="function">createElement</span>(<span class="string">'a'</span>);
+    a.href = url;
+    a.download = <span class="string">`test-results-${Date.now()}.json`</span>;
+    a.<span class="function">click</span>();
+    URL.<span class="function">revokeObjectURL</span>(url);
+}
+
+<span class="comment">// Call from browser console or button</span>
+window.<span class="function">exportResults</span>();</pre>
+                        </div>
+
+                        <h4>Exported Data Structure</h4>
+                        <div class="example-code">
+<pre>{
+    <span class="string">"tests"</span>: {
+        <span class="string">"auth-test"</span>: {
+            <span class="string">"id"</span>: <span class="string">"auth-test"</span>,
+            <span class="string">"name"</span>: <span class="string">"User Authentication Test"</span>,
+            <span class="string">"status"</span>: <span class="string">"passed"</span>,
+            <span class="string">"executionTime"</span>: <span class="number">1234</span>,
+            <span class="string">"timestamp"</span>: <span class="string">"2025-11-13T10:30:45.123Z"</span>
+        }
+    },
+    <span class="string">"history"</span>: [
+        {
+            <span class="string">"testId"</span>: <span class="string">"auth-test"</span>,
+            <span class="string">"result"</span>: { <span class="comment">/* result object */</span> },
+            <span class="string">"timestamp"</span>: <span class="string">"2025-11-13T10:30:45.123Z"</span>
+        }
+    ],
+    <span class="string">"exportDate"</span>: <span class="string">"2025-11-13T10:31:00.000Z"</span>
+}</pre>
+                        </div>
+
+                        <h4>How to Export</h4>
+                        <ol class="step-list">
+                            <li>
+                                <strong>Open Browser Console</strong>
+                                <p>Press F12 or right-click and select "Inspect" to open developer tools.</p>
+                            </li>
+                            <li>
+                                <strong>Run Export Command</strong>
+                                <p>Type <span class="inline-code">exportResults()</span> in the console and press Enter.</p>
+                            </li>
+                            <li>
+                                <strong>Save File</strong>
+                                <p>A JSON file will automatically download with a timestamp in the filename.</p>
+                            </li>
+                        </ol>
+
+                        <div class="highlight-box">
+                            <strong>Integration Tip:</strong> Use exported JSON data with CI/CD pipelines, reporting tools, or custom analysis scripts.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Example Section 5: localStorage -->
+            <section id="localstorage" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">5. Using localStorage</h2>
+                        <p class="card-subtitle">Persistent storage for test history and results</p>
+                    </div>
+                    <div class="card-body">
+                        <p>The application automatically saves test history to browser localStorage, allowing results to persist across sessions.</p>
+
+                        <h4>localStorage Implementation</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Save test history to localStorage</span>
+<span class="keyword">function</span> <span class="function">saveTestHistory</span>() {
+    <span class="keyword">try</span> {
+        localStorage.<span class="function">setItem</span>(
+            <span class="string">'quick-test-history'</span>,
+            JSON.<span class="function">stringify</span>(appState.history)
+        );
+    } <span class="keyword">catch</span> (error) {
+        console.<span class="function">error</span>(<span class="string">'Failed to save test history:'</span>, error);
+    }
+}
+
+<span class="comment">// Load test history from localStorage</span>
+<span class="keyword">function</span> <span class="function">loadTestHistory</span>() {
+    <span class="keyword">try</span> {
+        <span class="keyword">const</span> saved = localStorage.<span class="function">getItem</span>(<span class="string">'quick-test-history'</span>);
+        <span class="keyword">if</span> (saved) {
+            appState.history = JSON.<span class="function">parse</span>(saved);
+            console.<span class="function">log</span>(
+                <span class="string">'Test history loaded:'</span>,
+                appState.history.length,
+                <span class="string">'entries'</span>
+            );
+        }
+    } <span class="keyword">catch</span> (error) {
+        console.<span class="function">error</span>(<span class="string">'Failed to load test history:'</span>, error);
+    }
+}</pre>
+                        </div>
+
+                        <h4>localStorage Key Reference</h4>
+                        <table class="example-table">
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Data Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>quick-test-history</code></td>
+                                    <td>Array</td>
+                                    <td>Stores last 50 test results with timestamps</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Managing localStorage Data</h4>
+                        <div class="example-code">
+<pre><span class="comment">// View stored data</span>
+console.<span class="function">log</span>(localStorage.<span class="function">getItem</span>(<span class="string">'quick-test-history'</span>));
+
+<span class="comment">// Clear stored data</span>
+localStorage.<span class="function">removeItem</span>(<span class="string">'quick-test-history'</span>);
+
+<span class="comment">// Clear all localStorage</span>
+localStorage.<span class="function">clear</span>();</pre>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Privacy Note:</strong> localStorage data persists in the browser and is accessible to any script on the same domain. Do not store sensitive information.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Example Section 6: Test States -->
+            <section id="test-states" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">6. Understanding Test States</h2>
+                        <p class="card-subtitle">Complete lifecycle of test execution</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Tests progress through four distinct states during their lifecycle. Understanding these states helps interpret test results and application behavior.</p>
+
+                        <h4>Test State Definitions</h4>
+                        <table class="example-table">
+                            <thead>
+                                <tr>
+                                    <th>State</th>
+                                    <th>Badge</th>
+                                    <th>Description</th>
+                                    <th>Actions Available</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Pending</strong></td>
+                                    <td><span class="badge-inline warning">PENDING</span></td>
+                                    <td>Test has not been executed yet</td>
+                                    <td>Run Test, Run All Tests</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Running</strong></td>
+                                    <td><span class="badge-inline">RUNNING</span></td>
+                                    <td>Test is currently executing</td>
+                                    <td>None (wait for completion)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Passed</strong></td>
+                                    <td><span class="badge-inline success">PASSED</span></td>
+                                    <td>Test completed successfully</td>
+                                    <td>Run Test again, View Results</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Failed</strong></td>
+                                    <td><span class="badge-inline error">FAILED</span></td>
+                                    <td>Test completed with errors</td>
+                                    <td>Run Test again, Debug, View Error</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>State Transition Diagram</h4>
+                        <div class="screenshot-placeholder">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            <p>Pending → Running → Passed/Failed</p>
+                        </div>
+
+                        <h4>State Management Code</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Update test status and UI</span>
+<span class="keyword">function</span> <span class="function">updateTestStatus</span>(testId, status) {
+    <span class="keyword">const</span> badge = document.<span class="function">getElementById</span>(<span class="string">`badge-${testId}`</span>);
+    <span class="keyword">const</span> card = document.<span class="function">getElementById</span>(<span class="string">`card-${testId}`</span>);
+
+    <span class="keyword">if</span> (badge) {
+        badge.textContent = status.<span class="function">charAt</span>(<span class="number">0</span>).<span class="function">toUpperCase</span>() + status.<span class="function">slice</span>(<span class="number">1</span>);
+        badge.className = <span class="string">`test-status-badge status-${status}`</span>;
+    }
+
+    <span class="keyword">if</span> (card) {
+        card.className = <span class="string">`test-card status-${status}`</span>;
+    }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- API Reference Section -->
+            <section id="api-reference" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">7. API Reference</h2>
+                        <p class="card-subtitle">Available functions, parameters, and usage</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Complete reference for all available API functions in the Quick Test App.</p>
+
+                        <h3>Core Functions</h3>
+
+                        <h4><span class="api-method post">FUNCTION</span> runTest(testId)</h4>
+                        <p>Execute a single test scenario by ID.</p>
+                        <div class="example-code">
+<pre><span class="comment">// Parameters</span>
+testId: <span class="keyword">string</span> <span class="comment">// Unique identifier for the test scenario</span>
+
+<span class="comment">// Returns</span>
+<span class="keyword">Promise</span>&lt;<span class="keyword">void</span>&gt; <span class="comment">// Resolves when test completes</span>
+
+<span class="comment">// Example</span>
+<span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'auth-test'</span>);
+
+<span class="comment">// Error Handling</span>
+<span class="keyword">try</span> {
+    <span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'invalid-id'</span>);
+} <span class="keyword">catch</span> (error) {
+    console.<span class="function">error</span>(<span class="string">'Test execution failed:'</span>, error);
+}</pre>
+                        </div>
+
+                        <h4><span class="api-method post">FUNCTION</span> runAllTests()</h4>
+                        <p>Execute all configured test scenarios sequentially.</p>
+                        <div class="example-code">
+<pre><span class="comment">// Parameters</span>
+<span class="comment">// None</span>
+
+<span class="comment">// Returns</span>
+<span class="keyword">Promise</span>&lt;<span class="keyword">void</span>&gt; <span class="comment">// Resolves when all tests complete</span>
+
+<span class="comment">// Example</span>
+<span class="keyword">await</span> <span class="function">runAllTests</span>();</pre>
+                        </div>
+
+                        <h4><span class="api-method delete">FUNCTION</span> resetTests()</h4>
+                        <p>Reset all tests to initial pending state.</p>
+                        <div class="example-code">
+<pre><span class="comment">// Parameters</span>
+<span class="comment">// None</span>
+
+<span class="comment">// Returns</span>
+<span class="keyword">void</span>
+
+<span class="comment">// Example</span>
+<span class="function">resetTests</span>();</pre>
+                        </div>
+
+                        <h4><span class="api-method get">FUNCTION</span> exportResults()</h4>
+                        <p>Export test results to JSON file.</p>
+                        <div class="example-code">
+<pre><span class="comment">// Parameters</span>
+<span class="comment">// None</span>
+
+<span class="comment">// Returns</span>
+<span class="keyword">void</span> <span class="comment">// Triggers file download</span>
+
+<span class="comment">// Example</span>
+<span class="function">exportResults</span>();</pre>
+                        </div>
+
+                        <h3>State Management Functions</h3>
+
+                        <h4><span class="api-method post">FUNCTION</span> updateTestStatus(testId, status)</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Updates test status badge and card styling</span>
+<span class="function">updateTestStatus</span>(<span class="string">'auth-test'</span>, <span class="string">'passed'</span>);
+
+<span class="comment">// Valid statuses: 'pending', 'running', 'passed', 'failed'</span></pre>
+                        </div>
+
+                        <h4><span class="api-method post">FUNCTION</span> displayTestResult(testId, result)</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Display result in test card</span>
+<span class="function">displayTestResult</span>(<span class="string">'auth-test'</span>, {
+    success: <span class="keyword">true</span>,
+    status: <span class="number">200</span>,
+    executionTime: <span class="number">1234</span>,
+    message: <span class="string">'Test passed'</span>
+});</pre>
+                        </div>
+
+                        <h3>Data Persistence Functions</h3>
+
+                        <h4><span class="api-method post">FUNCTION</span> saveTestHistory()</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Save current test history to localStorage</span>
+<span class="function">saveTestHistory</span>();</pre>
+                        </div>
+
+                        <h4><span class="api-method get">FUNCTION</span> loadTestHistory()</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Load test history from localStorage</span>
+<span class="function">loadTestHistory</span>();</pre>
+                        </div>
+
+                        <h3>Global State Object</h3>
+                        <div class="example-code">
+<pre><span class="comment">// Access application state</span>
+<span class="keyword">const</span> appState = {
+    tests: {}, <span class="comment">// Test scenarios and their results</span>
+    isRunningAll: <span class="keyword">false</span>, <span class="comment">// Flag for bulk test execution</span>
+    history: [] <span class="comment">// Historical test results (max 50)</span>
+};
+
+<span class="comment">// Example: Get test by ID</span>
+<span class="keyword">const</span> test = appState.tests[<span class="string">'auth-test'</span>];
+
+<span class="comment">// Example: Check if tests are running</span>
+<span class="keyword">if</span> (appState.isRunningAll) {
+    console.<span class="function">log</span>(<span class="string">'Tests are currently running'</span>);
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Common Use Cases -->
+            <section id="use-cases" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">8. Common Use Cases</h2>
+                        <p class="card-subtitle">Practical scenarios and implementation patterns</p>
+                    </div>
+                    <div class="card-body">
+                        <h3>Use Case 1: Basic Testing Workflow</h3>
+                        <div class="example-code">
+<pre><span class="comment">// 1. Run individual tests during development</span>
+<span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'auth-test'</span>);
+
+<span class="comment">// 2. Review results and fix issues</span>
+<span class="keyword">const</span> result = appState.tests[<span class="string">'auth-test'</span>].result;
+<span class="keyword">if</span> (!result.success) {
+    console.<span class="function">error</span>(<span class="string">'Test failed:'</span>, result.error);
+}
+
+<span class="comment">// 3. Run all tests before deployment</span>
+<span class="keyword">await</span> <span class="function">runAllTests</span>();
+
+<span class="comment">// 4. Export results for documentation</span>
+<span class="function">exportResults</span>();</pre>
+                        </div>
+
+                        <h3>Use Case 2: Automated Testing Setup</h3>
+                        <div class="example-code">
+<pre><span class="comment">// Run tests automatically on page load</span>
+document.<span class="function">addEventListener</span>(<span class="string">'DOMContentLoaded'</span>, <span class="keyword">async</span> () => {
+    <span class="comment">// Wait for initialization</span>
+    <span class="keyword">await new</span> <span class="function">Promise</span>(resolve => <span class="function">setTimeout</span>(resolve, <span class="number">1000</span>));
+
+    <span class="comment">// Run all tests</span>
+    <span class="keyword">await</span> <span class="function">runAllTests</span>();
+
+    <span class="comment">// Check results</span>
+    <span class="keyword">const</span> failed = <span class="function">Object.values</span>(appState.tests)
+        .<span class="function">filter</span>(t => t.status === <span class="string">'failed'</span>);
+
+    <span class="keyword">if</span> (failed.length > <span class="number">0</span>) {
+        console.<span class="function">error</span>(<span class="string">`${failed.length} tests failed!`</span>);
+    } <span class="keyword">else</span> {
+        console.<span class="function">log</span>(<span class="string">'All tests passed!'</span>);
+    }
+});</pre>
+                        </div>
+
+                        <h3>Use Case 3: CI/CD Integration</h3>
+                        <div class="example-code">
+<pre><span class="comment">// Node.js script for CI/CD pipeline</span>
+<span class="keyword">const</span> puppeteer = <span class="function">require</span>(<span class="string">'puppeteer'</span>);
+
+<span class="keyword">async function</span> <span class="function">runCITests</span>() {
+    <span class="keyword">const</span> browser = <span class="keyword">await</span> puppeteer.<span class="function">launch</span>();
+    <span class="keyword">const</span> page = <span class="keyword">await</span> browser.<span class="function">newPage</span>();
+
+    <span class="comment">// Navigate to test app</span>
+    <span class="keyword">await</span> page.<span class="function">goto</span>(<span class="string">'http://localhost:3000'</span>);
+
+    <span class="comment">// Run all tests</span>
+    <span class="keyword">await</span> page.<span class="function">evaluate</span>(<span class="keyword">async</span> () => {
+        <span class="keyword">await</span> <span class="function">runAllTests</span>();
+    });
+
+    <span class="comment">// Get results</span>
+    <span class="keyword">const</span> results = <span class="keyword">await</span> page.<span class="function">evaluate</span>(() => {
+        <span class="keyword">return</span> appState.tests;
+    });
+
+    <span class="comment">// Check for failures</span>
+    <span class="keyword">const</span> hasFailures = <span class="function">Object.values</span>(results)
+        .<span class="function">some</span>(t => t.status === <span class="string">'failed'</span>);
+
+    <span class="keyword">await</span> browser.<span class="function">close</span>();
+
+    <span class="comment">// Exit with appropriate code</span>
+    process.<span class="function">exit</span>(hasFailures ? <span class="number">1</span> : <span class="number">0</span>);
+}
+
+<span class="function">runCITests</span>();</pre>
+                        </div>
+
+                        <h3>Use Case 4: Debugging Failed Tests</h3>
+                        <div class="example-code">
+<pre><span class="comment">// Get all failed tests</span>
+<span class="keyword">const</span> failedTests = <span class="function">Object.values</span>(appState.tests)
+    .<span class="function">filter</span>(t => t.status === <span class="string">'failed'</span>);
+
+<span class="comment">// Log detailed error information</span>
+failedTests.<span class="function">forEach</span>(test => {
+    console.<span class="function">group</span>(<span class="string">`Failed Test: ${test.name}`</span>);
+    console.<span class="function">log</span>(<span class="string">'Error:'</span>, test.result.error);
+    console.<span class="function">log</span>(<span class="string">'Status Code:'</span>, test.result.status);
+    console.<span class="function">log</span>(<span class="string">'Execution Time:'</span>, test.executionTime, <span class="string">'ms'</span>);
+    console.<span class="function">log</span>(<span class="string">'Timestamp:'</span>, test.timestamp);
+    console.<span class="function">groupEnd</span>();
+});
+
+<span class="comment">// Retry failed tests</span>
+<span class="keyword">for</span> (<span class="keyword">const</span> test <span class="keyword">of</span> failedTests) {
+    console.<span class="function">log</span>(<span class="string">`Retrying: ${test.name}`</span>);
+    <span class="keyword">await</span> <span class="function">runTest</span>(test.id);
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="example-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">9. Best Practices</h2>
+                        <p class="card-subtitle">Testing strategies, performance tips, and common pitfalls</p>
+                    </div>
+                    <div class="card-body">
+                        <h3>Testing Strategies</h3>
+
+                        <div class="success-box">
+                            <h4>Do's</h4>
+                            <ul>
+                                <li>Run individual tests during development for faster feedback</li>
+                                <li>Run all tests before committing code changes</li>
+                                <li>Review test results immediately after execution</li>
+                                <li>Export results periodically for historical tracking</li>
+                                <li>Use descriptive test names that clearly indicate what is being tested</li>
+                                <li>Monitor execution times to identify performance regressions</li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box">
+                            <h4>Don'ts</h4>
+                            <ul>
+                                <li>Don't ignore failed tests - investigate and fix immediately</li>
+                                <li>Don't run tests in production environments</li>
+                                <li>Don't store sensitive data in localStorage</li>
+                                <li>Don't modify test state directly - use provided functions</li>
+                                <li>Don't run multiple test executions simultaneously</li>
+                            </ul>
+                        </div>
+
+                        <h3>Performance Tips</h3>
+
+                        <h4>1. Optimize Test Execution</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Bad: Running tests without waiting</span>
+<span class="function">runTest</span>(<span class="string">'test1'</span>);
+<span class="function">runTest</span>(<span class="string">'test2'</span>); <span class="comment">// May cause conflicts</span>
+
+<span class="comment">// Good: Wait for test completion</span>
+<span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'test1'</span>);
+<span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'test2'</span>);</pre>
+                        </div>
+
+                        <h4>2. Manage localStorage Size</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Clear old history periodically</span>
+<span class="keyword">if</span> (appState.history.length > <span class="number">50</span>) {
+    appState.history = appState.history.<span class="function">slice</span>(<span class="number">0</span>, <span class="number">50</span>);
+    <span class="function">saveTestHistory</span>();
+}</pre>
+                        </div>
+
+                        <h4>3. Monitor Test Duration</h4>
+                        <div class="example-code">
+<pre><span class="comment">// Set up performance monitoring</span>
+<span class="keyword">const</span> <span class="function">monitorPerformance</span> = () => {
+    <span class="keyword">const</span> slowTests = <span class="function">Object.values</span>(appState.tests)
+        .<span class="function">filter</span>(t => t.executionTime > <span class="number">3000</span>);
+
+    <span class="keyword">if</span> (slowTests.length > <span class="number">0</span>) {
+        console.<span class="function">warn</span>(<span class="string">'Slow tests detected:'</span>, slowTests);
+    }
+};</pre>
+                        </div>
+
+                        <h3>Common Pitfalls to Avoid</h3>
+
+                        <table class="example-table">
+                            <thead>
+                                <tr>
+                                    <th>Pitfall</th>
+                                    <th>Impact</th>
+                                    <th>Solution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Not waiting for async operations</td>
+                                    <td>Race conditions, unreliable results</td>
+                                    <td>Always use <code>await</code> with test functions</td>
+                                </tr>
+                                <tr>
+                                    <td>Modifying appState directly</td>
+                                    <td>UI not updating, inconsistent state</td>
+                                    <td>Use provided state management functions</td>
+                                </tr>
+                                <tr>
+                                    <td>Ignoring execution time increases</td>
+                                    <td>Performance degradation over time</td>
+                                    <td>Monitor and investigate slow tests</td>
+                                </tr>
+                                <tr>
+                                    <td>Not clearing localStorage</td>
+                                    <td>Storage quota exceeded</td>
+                                    <td>Implement periodic cleanup or limits</td>
+                                </tr>
+                                <tr>
+                                    <td>Running tests in parallel</td>
+                                    <td>Resource conflicts, invalid results</td>
+                                    <td>Use sequential execution with delays</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Code Quality Guidelines</h3>
+
+                        <div class="highlight-box">
+                            <h4>Maintainable Test Code</h4>
+                            <div class="example-code">
+<pre><span class="comment">// Good: Clear, documented, error-handled</span>
+<span class="keyword">async function</span> <span class="function">customTestWorkflow</span>() {
+    <span class="keyword">try</span> {
+        <span class="comment">// 1. Reset state</span>
+        <span class="function">resetTests</span>();
+
+        <span class="comment">// 2. Run critical tests</span>
+        <span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'auth-test'</span>);
+        <span class="keyword">await</span> <span class="function">runTest</span>(<span class="string">'db-test'</span>);
+
+        <span class="comment">// 3. Check results</span>
+        <span class="keyword">const</span> criticalPassed = [<span class="string">'auth-test'</span>, <span class="string">'db-test'</span>]
+            .<span class="function">every</span>(id => appState.tests[id].status === <span class="string">'passed'</span>);
+
+        <span class="keyword">if</span> (criticalPassed) {
+            console.<span class="function">log</span>(<span class="string">'Critical tests passed'</span>);
+            <span class="comment">// 4. Run remaining tests</span>
+            <span class="keyword">await</span> <span class="function">runAllTests</span>();
+        }
+    } <span class="keyword">catch</span> (error) {
+        console.<span class="function">error</span>(<span class="string">'Workflow failed:'</span>, error);
+    }
+}</pre>
+                            </div>
+                        </div>
+
+                        <h3>Security Considerations</h3>
+                        <ul>
+                            <li>Never store authentication tokens in localStorage</li>
+                            <li>Avoid logging sensitive data to console</li>
+                            <li>Sanitize test inputs to prevent injection attacks</li>
+                            <li>Use HTTPS for all API endpoint tests</li>
+                            <li>Implement rate limiting for test execution</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Call to Action -->
+            <section class="example-section">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>Ready to Start Testing?</h2>
+                        <p>Now that you understand how to use the Quick Test App, it's time to put it into practice.</p>
+                        <div class="btn-group" style="justify-content: center; margin-top: var(--spacing-lg);">
+                            <a href="../index.html" class="btn btn-primary btn-lg">
+                                Go to Dashboard
+                            </a>
+                            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-secondary btn-lg">
+                                Back to Top
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div>
+                    <h4 class="footer-section-title">Quick Test App</h4>
+                    <p style="color: var(--color-gray-600); font-size: var(--font-size-sm);">
+                        Professional testing dashboard for rapid application testing and scenario management.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="footer-section-title">Resources</h4>
+                    <div class="footer-links">
+                        <a href="../index.html" class="footer-link">Dashboard</a>
+                        <a href="#examples" class="footer-link">Examples</a>
+                        <a href="#api-reference" class="footer-link">API Reference</a>
+                        <a href="#best-practices" class="footer-link">Best Practices</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-section-title">Support</h4>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">Documentation</a>
+                        <a href="#" class="footer-link">GitHub Repository</a>
+                        <a href="#" class="footer-link">Report Issue</a>
+                        <a href="#" class="footer-link">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2025 Quick Test App. All rights reserved. Built with JarvisII.
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
