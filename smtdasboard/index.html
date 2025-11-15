@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SMT Process Dashboard - Real-time monitoring of PCB assembly line KPIs">
+    <title>SMT Process Dashboard</title>
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/layouts/dashboard.css">
+    <link rel="stylesheet" href="src/css/components/kpi-card.css">
+    <link rel="stylesheet" href="src/css/components/chart.css">
+    <link rel="stylesheet" href="src/css/components/alert.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg class="nav-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                <h1>SMT Process Dashboard</h1>
+            </div>
+            <div class="nav-controls">
+                <div class="status-indicator">
+                    <span class="status-dot status-active"></span>
+                    <span class="status-text">System Active</span>
+                </div>
+                <button class="btn btn-secondary" id="configBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m0-18l-2.5 2.5M12 1l2.5 2.5M12 23l-2.5-2.5M12 23l2.5-2.5"/>
+                    </svg>
+                    Settings
+                </button>
+                <button class="btn btn-primary" id="refreshBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alert Panel -->
+    <div class="alert-container" id="alertContainer"></div>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-container">
+        <!-- Primary KPIs -->
+        <section class="kpi-section">
+            <h2 class="section-title">Primary KPIs</h2>
+            <div class="kpi-grid">
+                <!-- First Pass Yield -->
+                <div class="kpi-card" data-kpi="fpy">
+                    <div class="kpi-header">
+                        <div class="kpi-icon kpi-icon-primary">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <span class="kpi-label">First Pass Yield</span>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="fpyValue">--</div>
+                        <div class="kpi-unit">%</div>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-trend" id="fpyTrend">
+                            <svg class="trend-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            <span class="trend-value">--</span>
+                        </span>
+                        <span class="kpi-target">Target: 98%</span>
+                    </div>
+                </div>
+
+                <!-- Overall Equipment Effectiveness -->
+                <div class="kpi-card" data-kpi="oee">
+                    <div class="kpi-header">
+                        <div class="kpi-icon kpi-icon-success">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <span class="kpi-label">Overall Equipment Effectiveness</span>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="oeeValue">--</div>
+                        <div class="kpi-unit">%</div>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-trend" id="oeeTrend">
+                            <svg class="trend-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            <span class="trend-value">--</span>
+                        </span>
+                        <span class="kpi-target">Target: 85%</span>
+                    </div>
+                </div>
+
+                <!-- DPMO -->
+                <div class="kpi-card" data-kpi="dpmo">
+                    <div class="kpi-header">
+                        <div class="kpi-icon kpi-icon-warning">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                        </div>
+                        <span class="kpi-label">Defects Per Million</span>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="dpmoValue">--</div>
+                        <div class="kpi-unit">DPMO</div>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-trend" id="dpmoTrend">
+                            <svg class="trend-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            <span class="trend-value">--</span>
+                        </span>
+                        <span class="kpi-target">Target: &lt;500</span>
+                    </div>
+                </div>
+
+                <!-- Cycle Time -->
+                <div class="kpi-card" data-kpi="cycleTime">
+                    <div class="kpi-header">
+                        <div class="kpi-icon kpi-icon-info">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        <span class="kpi-label">Cycle Time</span>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="cycleTimeValue">--</div>
+                        <div class="kpi-unit">sec</div>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-trend" id="cycleTimeTrend">
+                            <svg class="trend-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            <span class="trend-value">--</span>
+                        </span>
+                        <span class="kpi-target">Target: &lt;45s</span>
+                    </div>
+                </div>
+
+                <!-- Throughput -->
+                <div class="kpi-card" data-kpi="throughput">
+                    <div class="kpi-header">
+                        <div class="kpi-icon kpi-icon-primary">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <span class="kpi-label">Throughput</span>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="throughputValue">--</div>
+                        <div class="kpi-unit">boards/hr</div>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-trend" id="throughputTrend">
+                            <svg class="trend-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            <span class="trend-value">--</span>
+                        </span>
+                        <span class="kpi-target">Target: 80 bph</span>
+                    </div>
+                </div>
+
+                <!-- Machine Uptime -->
+                <div class="kpi-card" data-kpi="uptime">
+                    <div class="kpi-header">
+                        <div class="kpi-icon kpi-icon-success">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <span class="kpi-label">Machine Uptime</span>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="uptimeValue">--</div>
+                        <div class="kpi-unit">%</div>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-trend" id="uptimeTrend">
+                            <svg class="trend-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            <span class="trend-value">--</span>
+                        </span>
+                        <span class="kpi-target">Target: 95%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">First Pass Yield Trend</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn" data-period="1h">1H</button>
+                        <button class="chart-btn active" data-period="8h">8H</button>
+                        <button class="chart-btn" data-period="24h">24H</button>
+                    </div>
+                </div>
+                <canvas id="fpyChart" class="chart-canvas"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">OEE Components</h3>
+                </div>
+                <canvas id="oeeChart" class="chart-canvas"></canvas>
+            </div>
+        </section>
+
+        <!-- Secondary Metrics -->
+        <section class="secondary-metrics">
+            <h2 class="section-title">Secondary Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <span class="metric-label">Placement Accuracy</span>
+                    <span class="metric-value" id="placementAccuracy">--</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Component Placement Rate</span>
+                    <span class="metric-value" id="placementRate">--</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Solder Paste Inspection</span>
+                    <span class="metric-value" id="spiResult">--</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Active Boards</span>
+                    <span class="metric-value" id="activeBoards">--</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Completed Today</span>
+                    <span class="metric-value" id="completedToday">--</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Defect Rate</span>
+                    <span class="metric-value" id="defectRate">--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Defect Distribution -->
+        <section class="defect-section">
+            <h2 class="section-title">Defect Distribution</h2>
+            <div class="defect-container">
+                <canvas id="defectChart" class="chart-canvas"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <span>Last Updated: <span id="lastUpdate">--</span></span>
+            <span>|</span>
+            <span>Data Refresh: <span id="refreshInterval">5s</span></span>
+            <span>|</span>
+            <span>Version 1.0.0</span>
+        </div>
+    </footer>
+
+    <!-- Configuration Modal -->
+    <div class="modal" id="configModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Dashboard Settings</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="config-section">
+                    <h3>KPI Thresholds</h3>
+                    <div class="config-item">
+                        <label>First Pass Yield Target (%)</label>
+                        <input type="number" id="fpyTarget" value="98" min="0" max="100">
+                    </div>
+                    <div class="config-item">
+                        <label>OEE Target (%)</label>
+                        <input type="number" id="oeeTarget" value="85" min="0" max="100">
+                    </div>
+                    <div class="config-item">
+                        <label>DPMO Threshold</label>
+                        <input type="number" id="dpmoThreshold" value="500" min="0">
+                    </div>
+                    <div class="config-item">
+                        <label>Cycle Time Target (seconds)</label>
+                        <input type="number" id="cycleTimeTarget" value="45" min="0">
+                    </div>
+                    <div class="config-item">
+                        <label>Refresh Interval (seconds)</label>
+                        <input type="number" id="refreshIntervalInput" value="5" min="1" max="60">
+                    </div>
+                </div>
+                <div class="config-actions">
+                    <button class="btn btn-secondary" id="resetConfig">Reset to Defaults</button>
+                    <button class="btn btn-primary" id="saveConfig">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="src/js/utils/helpers.js"></script>
+    <script src="src/js/modules/config.js"></script>
+    <script src="src/js/modules/dataSimulator.js"></script>
+    <script src="src/js/modules/kpiCalculator.js"></script>
+    <script src="src/js/modules/chartManager.js"></script>
+    <script src="src/js/modules/alertManager.js"></script>
+    <script src="src/js/modules/dashboardController.js"></script>
+    <script src="src/js/app.js"></script>
+</body>
+</html>

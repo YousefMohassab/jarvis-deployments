@@ -1,0 +1,121 @@
+/* Chart Component Styles */
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.chart-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.chart-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-light);
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.chart-loading-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-tertiary);
+}
+
+.chart-error {
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: var(--error);
+}
+
+.chart-error-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto var(--spacing-md);
+    color: var(--error);
+}
+
+.chart-error-message {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.chart-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-sm);
+}
+
+.chart-tooltip {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+}
+
+.chart-tooltip-title {
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.chart-tooltip-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+}
+
+.chart-tooltip-color {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Responsive chart sizing */
+@media (max-width: 768px) {
+    .chart-canvas {
+        height: 250px !important;
+    }
+
+    .chart-legend {
+        gap: var(--spacing-md);
+    }
+
+    .chart-legend-item {
+        font-size: var(--font-size-xs);
+    }
+}
