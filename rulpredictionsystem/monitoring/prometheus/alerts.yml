@@ -1,0 +1,351 @@
+# Prometheus Alert Rules for RUL Prediction System
+# Comprehensive alerting for production monitoring
+
+groups:
+  - name: api_alerts
+    interval: 30s
+    rules:
+      # API Response Time Alert
+      - alert: HighAPIResponseTime
+        expr: histogram_quantile(0.95, rate(fastapi_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API response time detected"
+          description: "95th percentile response time is {{ $value }}s (threshold: 2s) for {{ $labels.endpoint }}"
+
+      # Critical API Response Time
+      - alert: CriticalAPIResponseTime
+        expr: histogram_quantile(0.95, rate(fastapi_request_duration_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "Critical API response time detected"
+          description: "95th percentile response time is {{ $value }}s (threshold: 5s) for {{ $labels.endpoint }}"
+
+      # High Error Rate
+      - alert: HighAPIErrorRate
+        expr: (sum(rate(fastapi_requests_total{status=~"5.."}[5m])) / sum(rate(fastapi_requests_total[5m]))) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "High API error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      # Service Down
+      - alert: APIServiceDown
+        expr: up{job="fastapi-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "FastAPI service is down"
+          description: "FastAPI service has been down for more than 1 minute"
+
+      # Too Many Active Connections
+      - alert: TooManyActiveConnections
+        expr: fastapi_active_connections > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Too many active connections"
+          description: "Active connections: {{ $value }} (threshold: 100)"
+
+  - name: model_alerts
+    interval: 30s
+    rules:
+      # Model Prediction Accuracy Drop
+      - alert: ModelAccuracyDrop
+        expr: model_prediction_accuracy < 0.85
+        for: 10m
+        labels:
+          severity: warning
+          component: ml-model
+        annotations:
+          summary: "Model prediction accuracy dropped"
+          description: "Model accuracy is {{ $value }} (threshold: 0.85)"
+
+      # Critical Accuracy Drop
+      - alert: CriticalModelAccuracyDrop
+        expr: model_prediction_accuracy < 0.70
+        for: 5m
+        labels:
+          severity: critical
+          component: ml-model
+        annotations:
+          summary: "Critical model accuracy drop"
+          description: "Model accuracy is {{ $value }} (threshold: 0.70). Immediate investigation required."
+
+      # High Model Inference Latency
+      - alert: HighModelInferenceLatency
+        expr: histogram_quantile(0.95, rate(model_inference_duration_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: ml-model
+        annotations:
+          summary: "High model inference latency"
+          description: "95th percentile inference time is {{ $value }}s (threshold: 1.0s)"
+
+      # Failed Predictions Rate
+      - alert: HighPredictionFailureRate
+        expr: (rate(model_predictions_failed_total[5m]) / rate(model_predictions_total[5m])) > 0.10
+        for: 5m
+        labels:
+          severity: critical
+          component: ml-model
+        annotations:
+          summary: "High prediction failure rate"
+          description: "Prediction failure rate is {{ $value | humanizePercentage }} (threshold: 10%)"
+
+      # Low Confidence Predictions
+      - alert: LowConfidencePredictions
+        expr: (sum(model_predictions_total{confidence="low"}) / sum(model_predictions_total)) > 0.30
+        for: 15m
+        labels:
+          severity: warning
+          component: ml-model
+        annotations:
+          summary: "High rate of low confidence predictions"
+          description: "{{ $value | humanizePercentage }} of predictions have low confidence (threshold: 30%)"
+
+      # Model Not Updated
+      - alert: ModelNotUpdated
+        expr: (time() - model_last_training_timestamp) > 604800
+        for: 1h
+        labels:
+          severity: warning
+          component: ml-model
+        annotations:
+          summary: "Model has not been retrained recently"
+          description: "Model was last trained {{ $value | humanizeDuration }} ago (threshold: 7 days)"
+
+  - name: infrastructure_alerts
+    interval: 30s
+    rules:
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: (100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 85
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }} (threshold: 85%)"
+
+      # Critical CPU Usage
+      - alert: CriticalCPUUsage
+        expr: (100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 95
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Critical CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }} (threshold: 95%)"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }} (threshold: 85%)"
+
+      # Critical Memory Usage
+      - alert: CriticalMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Critical memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }} (threshold: 95%)"
+
+      # Low Disk Space
+      - alert: LowDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Low disk space"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}:{{ $labels.mountpoint }} (threshold: 80%)"
+
+      # Critical Disk Space
+      - alert: CriticalDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) > 0.90
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Critical disk space"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}:{{ $labels.mountpoint }} (threshold: 90%)"
+
+      # High Disk I/O
+      - alert: HighDiskIO
+        expr: rate(node_disk_io_time_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High disk I/O utilization"
+          description: "Disk I/O utilization is {{ $value | humanizePercentage }} on {{ $labels.instance }} (threshold: 80%)"
+
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # Database Connection Issues
+      - alert: DatabaseConnectionPoolExhausted
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "{{ $value | humanizePercentage }} of database connections are in use (threshold: 80%)"
+
+      # Critical Database Connections
+      - alert: CriticalDatabaseConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Database connection pool exhausted"
+          description: "{{ $value | humanizePercentage }} of database connections are in use (threshold: 95%)"
+
+      # Database Down
+      - alert: DatabaseDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL has been down for more than 1 minute"
+
+      # High Database Query Time
+      - alert: HighDatabaseQueryTime
+        expr: rate(pg_stat_statements_mean_time_seconds[5m]) > 1.0
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High database query execution time"
+          description: "Average query time is {{ $value }}s (threshold: 1.0s)"
+
+      # Database Deadlocks
+      - alert: DatabaseDeadlocks
+        expr: rate(pg_stat_database_deadlocks[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Database deadlocks detected"
+          description: "{{ $value }} deadlocks per second detected in database"
+
+      # Database Replication Lag
+      - alert: DatabaseReplicationLag
+        expr: pg_replication_lag_seconds > 300
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Database replication lag detected"
+          description: "Replication lag is {{ $value }}s (threshold: 300s)"
+
+  - name: airflow_alerts
+    interval: 30s
+    rules:
+      # Airflow Task Failures
+      - alert: HighAirflowTaskFailureRate
+        expr: (rate(airflow_task_failures[15m]) / rate(airflow_task_total[15m])) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+          component: airflow
+        annotations:
+          summary: "High Airflow task failure rate"
+          description: "Task failure rate is {{ $value | humanizePercentage }} (threshold: 10%)"
+
+      # Airflow Scheduler Not Running
+      - alert: AirflowSchedulerDown
+        expr: airflow_scheduler_heartbeat < (time() - 300)
+        for: 5m
+        labels:
+          severity: critical
+          component: airflow
+        annotations:
+          summary: "Airflow scheduler is not running"
+          description: "Airflow scheduler heartbeat was last detected {{ $value }}s ago"
+
+      # Long Running DAG
+      - alert: LongRunningDAG
+        expr: time() - airflow_dag_run_start_time > 3600
+        for: 5m
+        labels:
+          severity: warning
+          component: airflow
+        annotations:
+          summary: "DAG running for too long"
+          description: "DAG {{ $labels.dag_id }} has been running for {{ $value | humanizeDuration }} (threshold: 1 hour)"
+
+  - name: business_alerts
+    interval: 60s
+    rules:
+      # Low Prediction Volume
+      - alert: LowPredictionVolume
+        expr: rate(model_predictions_total[1h]) < 10
+        for: 30m
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Low prediction volume"
+          description: "Only {{ $value }} predictions per second (expected: >10/s)"
+
+      # High Critical RUL Predictions
+      - alert: HighCriticalRULPredictions
+        expr: (sum(rate(model_predictions_total{rul_category="critical"}[1h])) / sum(rate(model_predictions_total[1h]))) > 0.20
+        for: 15m
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "High rate of critical RUL predictions"
+          description: "{{ $value | humanizePercentage }} of predictions indicate critical RUL (threshold: 20%)"
+
+      # Anomaly Detection
+      - alert: UnusualPredictionPattern
+        expr: abs(rate(model_predictions_total[1h]) - rate(model_predictions_total[1h] offset 1d)) / rate(model_predictions_total[1h] offset 1d) > 0.50
+        for: 30m
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "Unusual prediction pattern detected"
+          description: "Prediction volume differs by {{ $value | humanizePercentage }} from same time yesterday"

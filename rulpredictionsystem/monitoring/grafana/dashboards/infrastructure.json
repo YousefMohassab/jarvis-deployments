@@ -1,0 +1,444 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "infrastructure",
+    "title": "Infrastructure Monitoring",
+    "tags": ["infrastructure", "system", "resources"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+    "time": {
+      "from": "now-3h",
+      "to": "now"
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "datasource",
+          "type": "datasource",
+          "query": "prometheus"
+        },
+        {
+          "name": "instance",
+          "type": "query",
+          "datasource": "${datasource}",
+          "query": "label_values(node_uname_info, instance)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true
+        },
+        {
+          "name": "device",
+          "type": "query",
+          "datasource": "${datasource}",
+          "query": "label_values(node_disk_io_time_seconds_total{instance=~\"$instance\"}, device)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true
+        },
+        {
+          "name": "interval",
+          "type": "interval",
+          "query": "30s,1m,5m,10m,30m",
+          "auto": true
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "System Info",
+        "type": "table",
+        "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "node_uname_info{instance=~\"$instance\"}",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {"Time": true, "Value": true, "__name__": true, "job": true},
+              "renameByName": {
+                "instance": "Instance",
+                "nodename": "Node",
+                "release": "Kernel",
+                "sysname": "OS",
+                "machine": "Architecture"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "CPU Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+        "targets": [
+          {
+            "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\",instance=~\"$instance\"}[$interval])) * 100)",
+            "legendFormat": "{{ instance }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "percent", "label": "CPU Usage", "min": 0, "max": 100},
+          {"format": "short"}
+        ],
+        "thresholds": [
+          {"value": 85, "colorMode": "critical", "op": "gt", "fill": true, "line": true, "lineColor": "rgba(255, 165, 0, 0.5)"},
+          {"value": 95, "colorMode": "critical", "op": "gt", "fill": true, "line": true, "lineColor": "rgba(255, 0, 0, 0.5)"}
+        ]
+      },
+      {
+        "id": 3,
+        "title": "CPU Usage by Mode",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+        "targets": [
+          {
+            "expr": "avg by (mode) (rate(node_cpu_seconds_total{instance=~\"$instance\"}[$interval])) * 100",
+            "legendFormat": "{{ mode }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "percent", "label": "CPU %"},
+          {"format": "short"}
+        ],
+        "options": {
+          "stacking": {"mode": "normal"}
+        }
+      },
+      {
+        "id": 4,
+        "title": "Memory Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+        "targets": [
+          {
+            "expr": "(1 - (node_memory_MemAvailable_bytes{instance=~\"$instance\"} / node_memory_MemTotal_bytes{instance=~\"$instance\"})) * 100",
+            "legendFormat": "{{ instance }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "percent", "label": "Memory Usage", "min": 0, "max": 100},
+          {"format": "short"}
+        ],
+        "thresholds": [
+          {"value": 85, "colorMode": "critical", "op": "gt", "fill": true, "line": true}
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Memory Details",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+        "targets": [
+          {
+            "expr": "node_memory_MemTotal_bytes{instance=~\"$instance\"}",
+            "legendFormat": "Total - {{ instance }}",
+            "refId": "A"
+          },
+          {
+            "expr": "node_memory_MemAvailable_bytes{instance=~\"$instance\"}",
+            "legendFormat": "Available - {{ instance }}",
+            "refId": "B"
+          },
+          {
+            "expr": "node_memory_Buffers_bytes{instance=~\"$instance\"}",
+            "legendFormat": "Buffers - {{ instance }}",
+            "refId": "C"
+          },
+          {
+            "expr": "node_memory_Cached_bytes{instance=~\"$instance\"}",
+            "legendFormat": "Cached - {{ instance }}",
+            "refId": "D"
+          }
+        ],
+        "yaxes": [
+          {"format": "bytes", "label": "Memory"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Disk Usage",
+        "type": "bargauge",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+        "targets": [
+          {
+            "expr": "(1 - (node_filesystem_avail_bytes{instance=~\"$instance\",fstype!~\"tmpfs|overlay\"} / node_filesystem_size_bytes{instance=~\"$instance\",fstype!~\"tmpfs|overlay\"})) * 100",
+            "legendFormat": "{{ instance }}:{{ mountpoint }}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "horizontal",
+          "displayMode": "gradient",
+          "showUnfilled": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 70, "color": "yellow"},
+                {"value": 85, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Disk I/O",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "targets": [
+          {
+            "expr": "rate(node_disk_read_bytes_total{instance=~\"$instance\",device=~\"$device\"}[$interval])",
+            "legendFormat": "Read - {{ device }}",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(node_disk_written_bytes_total{instance=~\"$instance\",device=~\"$device\"}[$interval])",
+            "legendFormat": "Write - {{ device }}",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {"format": "Bps", "label": "I/O Rate"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Network Traffic",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+        "targets": [
+          {
+            "expr": "rate(node_network_receive_bytes_total{instance=~\"$instance\"}[$interval])",
+            "legendFormat": "Receive - {{ device }}",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(node_network_transmit_bytes_total{instance=~\"$instance\"}[$interval])",
+            "legendFormat": "Transmit - {{ device }}",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {"format": "Bps", "label": "Network Traffic"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Network Errors",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 28},
+        "targets": [
+          {
+            "expr": "rate(node_network_receive_errs_total{instance=~\"$instance\"}[$interval])",
+            "legendFormat": "Receive Errors - {{ device }}",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(node_network_transmit_errs_total{instance=~\"$instance\"}[$interval])",
+            "legendFormat": "Transmit Errors - {{ device }}",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Errors/s"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Load Average",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 36},
+        "targets": [
+          {
+            "expr": "node_load1{instance=~\"$instance\"}",
+            "legendFormat": "1m - {{ instance }}",
+            "refId": "A"
+          },
+          {
+            "expr": "node_load5{instance=~\"$instance\"}",
+            "legendFormat": "5m - {{ instance }}",
+            "refId": "B"
+          },
+          {
+            "expr": "node_load15{instance=~\"$instance\"}",
+            "legendFormat": "15m - {{ instance }}",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Load"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Context Switches",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 36},
+        "targets": [
+          {
+            "expr": "rate(node_context_switches_total{instance=~\"$instance\"}[$interval])",
+            "legendFormat": "{{ instance }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Context Switches/s"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Container CPU Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 44},
+        "targets": [
+          {
+            "expr": "sum by (container) (rate(container_cpu_usage_seconds_total[$interval])) * 100",
+            "legendFormat": "{{ container }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "percent", "label": "CPU Usage"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Container Memory Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 44},
+        "targets": [
+          {
+            "expr": "sum by (container) (container_memory_usage_bytes)",
+            "legendFormat": "{{ container }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "bytes", "label": "Memory Usage"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 14,
+        "title": "PostgreSQL Connections",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 52},
+        "targets": [
+          {
+            "expr": "pg_stat_database_numbackends",
+            "legendFormat": "{{ datname }}",
+            "refId": "A"
+          },
+          {
+            "expr": "pg_settings_max_connections",
+            "legendFormat": "Max Connections",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Connections"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 15,
+        "title": "PostgreSQL Query Performance",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 52},
+        "targets": [
+          {
+            "expr": "rate(pg_stat_database_tup_fetched[$interval])",
+            "legendFormat": "Rows Fetched - {{ datname }}",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(pg_stat_database_tup_inserted[$interval])",
+            "legendFormat": "Rows Inserted - {{ datname }}",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(pg_stat_database_tup_updated[$interval])",
+            "legendFormat": "Rows Updated - {{ datname }}",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Rows/s"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 16,
+        "title": "Airflow Task Duration",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 60},
+        "targets": [
+          {
+            "expr": "airflow_task_duration{state=\"success\"}",
+            "legendFormat": "{{ dag_id }}.{{ task_id }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "s", "label": "Duration"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 17,
+        "title": "Airflow DAG Status",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 60},
+        "targets": [
+          {
+            "expr": "sum(airflow_dag_status{state=\"running\"})",
+            "legendFormat": "Running",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(airflow_dag_status{state=\"success\"})",
+            "legendFormat": "Success",
+            "refId": "B"
+          },
+          {
+            "expr": "sum(airflow_dag_status{state=\"failed\"})",
+            "legendFormat": "Failed",
+            "refId": "C"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "textMode": "value_and_name"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+# ============================================================================
+# Grafana - Custom Dashboards and Configuration
+# ============================================================================
+
+FROM grafana/grafana:10.2.2
+
+LABEL maintainer="RUL Prediction Team"
+LABEL version="10.2.2"
+LABEL description="Grafana dashboards for RUL prediction system"
+
+# Stay as root for all setup operations
+USER root
+
+# Copy custom configuration first
+COPY --chown=472:0 monitoring/grafana/grafana.ini /etc/grafana/grafana.ini
+
+# Copy provisioning configuration
+COPY --chown=472:0 monitoring/grafana/provisioning /etc/grafana/provisioning
+
+# Copy custom dashboards
+COPY --chown=472:0 monitoring/grafana/dashboards /var/lib/grafana/dashboards
+
+# Ensure directories exist and set permissions
+RUN mkdir -p /var/lib/grafana/plugins \
+             /var/log/grafana \
+             /etc/grafana/provisioning/datasources \
+             /etc/grafana/provisioning/dashboards && \
+    chown -R 472:0 /var/lib/grafana \
+                    /var/log/grafana \
+                    /etc/grafana && \
+    chmod -R 775 /var/lib/grafana \
+                 /var/log/grafana
+
+# Install plugins as root
+RUN grafana-cli plugins install grafana-clock-panel && \
+    grafana-cli plugins install grafana-piechart-panel && \
+    grafana-cli plugins install grafana-worldmap-panel && \
+    chown -R 472:0 /var/lib/grafana/plugins
+
+# Switch to grafana user (472 is the grafana user UID in the base image)
+USER 472
+
+# Set environment variables
+ENV GF_PATHS_DATA=/var/lib/grafana \
+    GF_PATHS_LOGS=/var/log/grafana \
+    GF_PATHS_PLUGINS=/var/lib/grafana/plugins \
+    GF_PATHS_PROVISIONING=/etc/grafana/provisioning \
+    GF_SERVER_HTTP_PORT=3000 \
+    GF_SECURITY_ADMIN_USER=admin \
+    GF_SECURITY_ADMIN_PASSWORD=admin \
+    GF_INSTALL_PLUGINS="" \
+    GF_USERS_ALLOW_SIGN_UP=false \
+    GF_AUTH_ANONYMOUS_ENABLED=false
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+
+# Start Grafana
+CMD ["/run.sh"]

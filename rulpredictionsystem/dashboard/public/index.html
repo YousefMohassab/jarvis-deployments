@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0e27" />
+    <meta
+      name="description"
+      content="Real-time dashboard for bearing RUL (Remaining Useful Life) prediction system"
+    />
+    <title>RUL Prediction System - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <style>
+      /* Critical CSS for faster initial render */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #0a0e27;
+        color: #e0e0e0;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      /* Loading spinner for initial load */
+      .initial-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #0a0e27;
+        color: #b0bec5;
+      }
+
+      .initial-loader .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #2a2f4a;
+        border-top: 4px solid #4fc3f7;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .initial-loader .loading-text {
+        margin-top: 1rem;
+        font-size: 1rem;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <div style="text-align: center; padding: 2rem; color: #f44336;">
+        You need to enable JavaScript to run this application.
+      </div>
+    </noscript>
+
+    <div id="root">
+      <!-- Initial loading indicator -->
+      <div class="initial-loader">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading RUL Prediction Dashboard...</p>
+      </div>
+    </div>
+
+    <!-- The React app will be injected here -->
+  </body>
+</html>

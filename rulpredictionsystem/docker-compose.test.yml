@@ -1,0 +1,250 @@
+# ============================================================================
+# Docker Compose Configuration - Testing Environment
+# Isolated test environment with test database and mock services
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # Test Database - PostgreSQL
+  # ==========================================================================
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: rul-postgres-test
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: rul_prediction_test
+    tmpfs:
+      - /var/lib/postgresql/data  # Use tmpfs for faster tests
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Test Cache - Redis
+  # ==========================================================================
+  redis-test:
+    image: redis:7-alpine
+    container_name: rul-redis-test
+    command: redis-server --save "" --appendonly no  # No persistence for tests
+    tmpfs:
+      - /data
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Test Runner - Unit Tests
+  # ==========================================================================
+  test-unit:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: rul-prediction-api:test
+    container_name: rul-test-unit
+    command: pytest tests/unit -v --cov=. --cov-report=html --cov-report=term
+    environment:
+      TESTING: "true"
+      DATABASE_URL: postgresql://test_user:test_password@postgres-test:5432/rul_prediction_test
+      REDIS_URL: redis://redis-test:6379/0
+      PYTHONPATH: /app
+    volumes:
+      - ./tests:/app/tests
+      - ./monitoring:/app/monitoring
+      - ./test-results:/app/test-results
+      - ./htmlcov:/app/htmlcov
+    networks:
+      - test-network
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+
+  # ==========================================================================
+  # Test Runner - Integration Tests
+  # ==========================================================================
+  test-integration:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: rul-prediction-api:test
+    container_name: rul-test-integration
+    command: pytest tests/integration -v --cov=. --cov-report=html --cov-report=term
+    environment:
+      TESTING: "true"
+      DATABASE_URL: postgresql://test_user:test_password@postgres-test:5432/rul_prediction_test
+      REDIS_URL: redis://redis-test:6379/0
+      API_URL: http://api-test:8000
+      PYTHONPATH: /app
+    volumes:
+      - ./tests:/app/tests
+      - ./monitoring:/app/monitoring
+      - ./airflow:/app/airflow
+      - ./test-results:/app/test-results
+      - ./htmlcov:/app/htmlcov
+    networks:
+      - test-network
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+      api-test:
+        condition: service_healthy
+
+  # ==========================================================================
+  # Test Runner - E2E Tests
+  # ==========================================================================
+  test-e2e:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: rul-prediction-api:test
+    container_name: rul-test-e2e
+    command: pytest tests/e2e -v --cov=. --cov-report=html --cov-report=term
+    environment:
+      TESTING: "true"
+      DATABASE_URL: postgresql://test_user:test_password@postgres-test:5432/rul_prediction_test
+      REDIS_URL: redis://redis-test:6379/0
+      API_URL: http://api-test:8000
+      DASHBOARD_URL: http://dashboard-test:80
+      PYTHONPATH: /app
+    volumes:
+      - ./tests:/app/tests
+      - ./test-results:/app/test-results
+      - ./htmlcov:/app/htmlcov
+    networks:
+      - test-network
+    depends_on:
+      api-test:
+        condition: service_healthy
+      dashboard-test:
+        condition: service_started
+
+  # ==========================================================================
+  # Test API Service
+  # ==========================================================================
+  api-test:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: rul-prediction-api:test
+    container_name: rul-api-test
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    environment:
+      TESTING: "true"
+      APP_ENV: testing
+      DATABASE_URL: postgresql://test_user:test_password@postgres-test:5432/rul_prediction_test
+      REDIS_URL: redis://redis-test:6379/0
+    networks:
+      - test-network
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Test Dashboard Service
+  # ==========================================================================
+  dashboard-test:
+    build:
+      context: .
+      dockerfile: docker/dashboard/Dockerfile
+    image: rul-prediction-dashboard:test
+    container_name: rul-dashboard-test
+    environment:
+      REACT_APP_API_URL: http://api-test:8000
+      REACT_APP_WS_URL: ws://api-test:8000/ws
+    networks:
+      - test-network
+    depends_on:
+      - api-test
+
+  # ==========================================================================
+  # Test Runner - Performance Tests
+  # ==========================================================================
+  test-performance:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: rul-prediction-api:test
+    container_name: rul-test-performance
+    command: pytest tests/performance -v --benchmark-only
+    environment:
+      TESTING: "true"
+      DATABASE_URL: postgresql://test_user:test_password@postgres-test:5432/rul_prediction_test
+      REDIS_URL: redis://redis-test:6379/0
+      API_URL: http://api-test:8000
+      PYTHONPATH: /app
+    volumes:
+      - ./tests:/app/tests
+      - ./test-results:/app/test-results
+    networks:
+      - test-network
+    depends_on:
+      api-test:
+        condition: service_healthy
+
+  # ==========================================================================
+  # Load Testing - Locust
+  # ==========================================================================
+  locust:
+    image: locustio/locust:latest
+    container_name: rul-locust
+    command: -f /locust/locustfile.py --host=http://api-test:8000
+    volumes:
+      - ./tests/performance/locustfile.py:/locust/locustfile.py
+    ports:
+      - "8089:8089"
+    networks:
+      - test-network
+    depends_on:
+      - api-test
+
+  # ==========================================================================
+  # Test Coverage Report
+  # ==========================================================================
+  coverage-report:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: rul-prediction-api:test
+    container_name: rul-coverage-report
+    command: >
+      bash -c "
+        coverage combine &&
+        coverage report &&
+        coverage html &&
+        coverage xml
+      "
+    volumes:
+      - ./test-results:/app/test-results
+      - ./htmlcov:/app/htmlcov
+      - ./coverage.xml:/app/coverage.xml
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  test-results:
+    driver: local

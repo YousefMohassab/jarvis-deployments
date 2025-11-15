@@ -1,0 +1,193 @@
+# ============================================================================
+# Docker Compose Configuration - Development Environment
+# Hot reload enabled, debug ports exposed, development tools included
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # Override API for development
+  # ==========================================================================
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+      target: builder  # Use builder stage for development tools
+    image: rul-prediction-api:dev
+    container_name: rul-api-dev
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "true"
+      LOG_LEVEL: debug
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      # Mount source code for hot reload
+      - ./monitoring/exporters:/app/monitoring/exporters
+      - ./monitoring/examples/fastapi_integration.py:/app/main.py
+      - ./logs/api:/app/logs
+      - model_artifacts:/app/models
+    ports:
+      - "8000:8000"
+      - "5678:5678"  # Python debugger port
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 2G
+
+  # ==========================================================================
+  # Override Dashboard for development
+  # ==========================================================================
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/dashboard/Dockerfile
+      target: builder  # Use builder stage
+    image: rul-prediction-dashboard:dev
+    container_name: rul-dashboard-dev
+    command: npm start
+    environment:
+      NODE_ENV: development
+      REACT_APP_API_URL: http://localhost:8000
+      REACT_APP_WS_URL: ws://localhost:8000/ws
+      CHOKIDAR_USEPOLLING: "true"  # For hot reload in Docker
+      WDS_SOCKET_PORT: 0
+    volumes:
+      # Mount source code for hot reload
+      - ./dashboard/src:/app/src
+      - ./dashboard/public:/app/public
+      - /app/node_modules  # Use container's node_modules
+    ports:
+      - "3001:3000"  # Different port to avoid conflict
+    stdin_open: true
+    tty: true
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+
+  # ==========================================================================
+  # PostgreSQL with development settings
+  # ==========================================================================
+  postgres:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rul_prediction
+    ports:
+      - "5432:5432"
+
+  # ==========================================================================
+  # Redis with development settings
+  # ==========================================================================
+  redis:
+    command: redis-server --appendonly yes --loglevel debug
+    ports:
+      - "6379:6379"
+
+  # ==========================================================================
+  # Airflow Webserver - Development
+  # ==========================================================================
+  airflow-webserver:
+    environment:
+      AIRFLOW__WEBSERVER__RELOAD_ON_PLUGIN_CHANGE: 'true'
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/operators:/opt/airflow/plugins/operators
+      - airflow_logs:/opt/airflow/logs
+
+  # ==========================================================================
+  # Airflow Scheduler - Development
+  # ==========================================================================
+  airflow-scheduler:
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/operators:/opt/airflow/plugins/operators
+      - airflow_logs:/opt/airflow/logs
+
+  # ==========================================================================
+  # Development Tools - PgAdmin
+  # ==========================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: rul-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - backend
+
+  # ==========================================================================
+  # Development Tools - Redis Commander
+  # ==========================================================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: rul-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - backend
+    depends_on:
+      - redis
+
+  # ==========================================================================
+  # Development Tools - Mailhog (Email testing)
+  # ==========================================================================
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: rul-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - backend
+
+  # ==========================================================================
+  # Development Tools - Jupyter Notebook
+  # ==========================================================================
+  jupyter:
+    build:
+      context: .
+      dockerfile: docker/training/Dockerfile
+    image: rul-prediction-training:dev
+    container_name: rul-jupyter
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+    volumes:
+      - ./notebooks:/app/notebooks
+      - ./training:/app/training
+      - training_data:/app/data
+      - model_artifacts:/app/models
+    ports:
+      - "8888:8888"
+      - "6006:6006"  # TensorBoard
+    networks:
+      - backend
+    depends_on:
+      - postgres
+      - redis
+
+# ==========================================================================
+# Additional volumes for development
+# ==========================================================================
+volumes:
+  pgadmin_data:
+    driver: local

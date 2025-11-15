@@ -1,0 +1,22 @@
+# Monitoring Dependencies
+
+# Prometheus
+prometheus-client==0.18.0
+
+# Database
+psycopg2-binary==2.9.9
+
+# Scheduling
+schedule==1.2.0
+
+# Data processing
+numpy==1.24.3
+
+# HTTP requests
+requests==2.31.0
+
+# Async support
+aiohttp==3.9.0
+
+# Logging
+python-json-logger==2.0.7

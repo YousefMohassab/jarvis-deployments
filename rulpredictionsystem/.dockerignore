@@ -1,0 +1,224 @@
+# ============================================================================
+# Docker Ignore File
+# Excludes files from Docker build context to reduce build time and image size
+# ============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Environment
+.env
+.env.local
+.env.*.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+*.tar
+*.tar.gz
+
+# Documentation
+*.md
+docs/
+examples/
+documentation/
+
+# Tests
+tests/
+test/
+*.test.js
+*.spec.js
+test-results/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Data files
+*.csv
+*.json
+*.xml
+*.yaml
+*.yml
+data/
+datasets/
+*.db
+*.sqlite
+*.sqlite3
+
+# Model files (large files)
+*.h5
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+models/*
+!models/.gitkeep
+
+# Backups
+backups/
+*.backup
+*.sql.gz
+
+# CI/CD
+.travis.yml
+.circleci/
+.gitlab-ci.yml
+azure-pipelines.yml
+Jenkinsfile
+
+# Kubernetes
+kubernetes/
+k8s/
+*.yaml
+*.yml
+
+# Monitoring
+prometheus/
+grafana/
+
+# Scripts
+scripts/
+*.sh
+
+# Media files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.mp4
+*.avi
+
+# Archives
+*.zip
+*.rar
+*.7z
+*.gz
+*.bz2
+
+# Airflow specific
+airflow/logs/
+airflow/__pycache__/
+airflow.db
+airflow.cfg
+unittests.cfg
+
+# ML/AI specific
+checkpoints/
+tensorboard/
+mlruns/
+wandb/
+
+# Cache
+.cache/
+*.cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# Local configuration
+local/
+local_settings.py
+secrets/
+credentials/
+
+# Exclude everything except necessary files
+# This is a whitelist approach - uncomment if needed
+# *
+# !requirements.txt
+# !package.json
+# !src/
+# !monitoring/exporters/

@@ -1,0 +1,51 @@
+# Grafana Datasource Provisioning
+# Auto-configure Prometheus as a datasource
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: 2.45.0
+      cacheLevel: 'High'
+      disableMetricsLookup: false
+      incrementalQuerying: true
+      incrementalQueryOverlapWindow: 10m
+      timeInterval: "15s"
+    secureJsonData:
+      # Add authentication if needed
+      # httpHeaderValue1: 'Bearer your-token'
+    version: 1
+    uid: prometheus-datasource
+
+  # Optional: Add additional datasources
+  - name: Prometheus-Long-Term
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: false
+    editable: true
+    jsonData:
+      httpMethod: POST
+      timeInterval: "1m"
+    version: 1
+    uid: prometheus-longterm
+
+# Example: Loki for logs (if implemented)
+# - name: Loki
+#   type: loki
+#   access: proxy
+#   url: http://loki:3100
+#   isDefault: false
+#   editable: true
+#   jsonData:
+#     maxLines: 1000
+#   version: 1

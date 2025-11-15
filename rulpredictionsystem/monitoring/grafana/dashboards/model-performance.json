@@ -1,0 +1,482 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "model-performance",
+    "title": "ML Model Performance",
+    "tags": ["ml", "model", "rul", "performance"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "1m",
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "datasource",
+          "type": "datasource",
+          "query": "prometheus"
+        },
+        {
+          "name": "model_version",
+          "type": "query",
+          "datasource": "${datasource}",
+          "query": "label_values(model_info, version)",
+          "refresh": 1,
+          "multi": false,
+          "includeAll": false
+        },
+        {
+          "name": "interval",
+          "type": "interval",
+          "query": "1m,5m,10m,30m,1h,6h",
+          "auto": true,
+          "auto_count": 30
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Model Info",
+        "type": "table",
+        "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "model_info{version=\"$model_version\"}",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showHeader": true
+        },
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {"Time": true, "Value": true},
+              "indexByName": {},
+              "renameByName": {}
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Prediction Accuracy Over Time",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+        "targets": [
+          {
+            "expr": "model_prediction_accuracy",
+            "legendFormat": "Accuracy",
+            "refId": "A"
+          },
+          {
+            "expr": "model_precision",
+            "legendFormat": "Precision",
+            "refId": "B"
+          },
+          {
+            "expr": "model_recall",
+            "legendFormat": "Recall",
+            "refId": "C"
+          },
+          {
+            "expr": "model_f1_score",
+            "legendFormat": "F1 Score",
+            "refId": "D"
+          }
+        ],
+        "yaxes": [
+          {"format": "percentunit", "label": "Score", "min": 0, "max": 1},
+          {"format": "short"}
+        ],
+        "thresholds": [
+          {"value": 0.85, "colorMode": "critical", "op": "lt", "fill": false, "line": true, "lineColor": "rgba(255, 0, 0, 0.5)"}
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Model Error Metrics",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+        "targets": [
+          {
+            "expr": "model_mae",
+            "legendFormat": "MAE",
+            "refId": "A"
+          },
+          {
+            "expr": "model_rmse",
+            "legendFormat": "RMSE",
+            "refId": "B"
+          },
+          {
+            "expr": "model_mape",
+            "legendFormat": "MAPE",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Error"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 4,
+        "title": "R² Score",
+        "type": "gauge",
+        "gridPos": {"h": 6, "w": 6, "x": 0, "y": 12},
+        "targets": [
+          {
+            "expr": "model_r2_score",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 0.7, "color": "yellow"},
+                {"value": 0.85, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Current Accuracy",
+        "type": "gauge",
+        "gridPos": {"h": 6, "w": 6, "x": 6, "y": 12},
+        "targets": [
+          {
+            "expr": "model_prediction_accuracy",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 0.7, "color": "yellow"},
+                {"value": 0.85, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Predictions per Minute",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 6, "x": 12, "y": 12},
+        "targets": [
+          {
+            "expr": "sum(rate(model_predictions_total[$interval])) * 60",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "none",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Failed Predictions",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 6, "x": 18, "y": 12},
+        "targets": [
+          {
+            "expr": "sum(increase(model_predictions_failed_total[$interval]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "none",
+            "decimals": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 10, "color": "yellow"},
+                {"value": 50, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Inference Latency Distribution",
+        "type": "heatmap",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 18},
+        "targets": [
+          {
+            "expr": "sum(rate(model_inference_duration_seconds_bucket[$interval])) by (le)",
+            "format": "heatmap",
+            "legendFormat": "{{ le }}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "calculate": false,
+          "cellGap": 2,
+          "cellRadius": 0,
+          "yAxis": {
+            "format": "s",
+            "logBase": 1
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "Inference Latency Percentiles",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 18},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(model_inference_duration_seconds_bucket[$interval]))",
+            "legendFormat": "p50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.90, rate(model_inference_duration_seconds_bucket[$interval]))",
+            "legendFormat": "p90",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(model_inference_duration_seconds_bucket[$interval]))",
+            "legendFormat": "p95",
+            "refId": "C"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(model_inference_duration_seconds_bucket[$interval]))",
+            "legendFormat": "p99",
+            "refId": "D"
+          }
+        ],
+        "yaxes": [
+          {"format": "s", "label": "Latency"},
+          {"format": "short"}
+        ],
+        "thresholds": [
+          {"value": 1.0, "colorMode": "critical", "op": "gt", "fill": true, "line": true}
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Confidence Score Distribution",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 26},
+        "targets": [
+          {
+            "expr": "sum by (confidence) (rate(model_predictions_total[$interval]))",
+            "legendFormat": "{{ confidence }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Predictions/s"},
+          {"format": "short"}
+        ],
+        "options": {
+          "stacking": {"mode": "percent"}
+        }
+      },
+      {
+        "id": 11,
+        "title": "RUL Prediction Distribution",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 26},
+        "targets": [
+          {
+            "expr": "sum by (rul_category) (rate(model_predictions_total[$interval]))",
+            "legendFormat": "{{ rul_category }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Predictions/s"},
+          {"format": "short"}
+        ],
+        "seriesOverrides": [
+          {"alias": "critical", "color": "#F2495C"},
+          {"alias": "warning", "color": "#FF9830"},
+          {"alias": "normal", "color": "#73BF69"}
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Feature Importance",
+        "type": "bargauge",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 34},
+        "targets": [
+          {
+            "expr": "model_feature_importance",
+            "legendFormat": "{{ feature }}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "horizontal",
+          "displayMode": "gradient",
+          "showUnfilled": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "id": 13,
+        "title": "Training Metrics History",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 34},
+        "targets": [
+          {
+            "expr": "model_training_loss",
+            "legendFormat": "Training Loss",
+            "refId": "A"
+          },
+          {
+            "expr": "model_validation_loss",
+            "legendFormat": "Validation Loss",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Loss"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Bearing Health Status Distribution",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 42},
+        "targets": [
+          {
+            "expr": "sum(bearing_health_status{status=\"healthy\"})",
+            "legendFormat": "Healthy",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(bearing_health_status{status=\"degrading\"})",
+            "legendFormat": "Degrading",
+            "refId": "B"
+          },
+          {
+            "expr": "sum(bearing_health_status{status=\"critical\"})",
+            "legendFormat": "Critical",
+            "refId": "C"
+          },
+          {
+            "expr": "sum(bearing_health_status{status=\"failed\"})",
+            "legendFormat": "Failed",
+            "refId": "D"
+          }
+        ],
+        "options": {
+          "legend": {"displayMode": "list", "placement": "right"},
+          "pieType": "donut"
+        }
+      },
+      {
+        "id": 15,
+        "title": "Model Drift Detection",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 42},
+        "targets": [
+          {
+            "expr": "model_data_drift_score",
+            "legendFormat": "Data Drift",
+            "refId": "A"
+          },
+          {
+            "expr": "model_concept_drift_score",
+            "legendFormat": "Concept Drift",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Drift Score", "min": 0, "max": 1},
+          {"format": "short"}
+        ],
+        "thresholds": [
+          {"value": 0.3, "colorMode": "critical", "op": "gt", "fill": true, "line": true}
+        ]
+      },
+      {
+        "id": 16,
+        "title": "Last Training Time",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 42},
+        "targets": [
+          {
+            "expr": "time() - model_last_training_timestamp",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "textMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 259200, "color": "yellow"},
+                {"value": 604800, "color": "red"}
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

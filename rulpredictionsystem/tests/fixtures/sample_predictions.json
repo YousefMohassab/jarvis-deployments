@@ -1,0 +1,31 @@
+{
+  "predictions": [
+    {
+      "bearing_id": "BRG-1001",
+      "predicted_rul": 100.5,
+      "confidence": 0.95,
+      "uncertainty": 8.5,
+      "health_status": "good",
+      "timestamp": "2024-01-01T00:00:00Z",
+      "model_version": "v1.0.0"
+    },
+    {
+      "bearing_id": "BRG-1002",
+      "predicted_rul": 45.2,
+      "confidence": 0.88,
+      "uncertainty": 12.3,
+      "health_status": "warning",
+      "timestamp": "2024-01-01T00:05:00Z",
+      "model_version": "v1.0.0"
+    },
+    {
+      "bearing_id": "BRG-1003",
+      "predicted_rul": 15.7,
+      "confidence": 0.92,
+      "uncertainty": 5.2,
+      "health_status": "critical",
+      "timestamp": "2024-01-01T00:10:00Z",
+      "model_version": "v1.0.0"
+    }
+  ]
+}

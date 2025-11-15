@@ -1,0 +1,19 @@
+{
+  "features": {
+    "rms": 1.234,
+    "peak": 5.678,
+    "crest_factor": 4.5,
+    "kurtosis": 3.2,
+    "skewness": 0.1,
+    "mean": 0.05,
+    "std": 1.1,
+    "variance": 1.21,
+    "peak_frequency": 120.5,
+    "spectral_centroid": 150.3
+  },
+  "metadata": {
+    "bearing_id": "BRG-1001",
+    "timestamp": "2024-01-01T00:00:00Z",
+    "sampling_rate": 20000
+  }
+}

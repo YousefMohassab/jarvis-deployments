@@ -1,0 +1,41 @@
+# ============================================================================
+# Prometheus - Custom Configuration
+# ============================================================================
+
+FROM prom/prometheus:v2.48.0
+
+LABEL maintainer="RUL Prediction Team"
+LABEL version="2.48.0"
+LABEL description="Prometheus monitoring for RUL prediction system"
+
+# Copy custom configuration
+COPY monitoring/prometheus/prometheus.yml /etc/prometheus/prometheus.yml
+COPY monitoring/prometheus/alerts.yml /etc/prometheus/alerts.yml
+
+# Copy recording rules
+COPY monitoring/prometheus/recording_rules.yml /etc/prometheus/recording_rules.yml
+
+# Create data directory
+USER root
+RUN mkdir -p /prometheus/data && \
+    chown -R nobody:nobody /prometheus /etc/prometheus && \
+    chmod -R 755 /prometheus /etc/prometheus
+
+USER nobody
+
+# Expose port
+EXPOSE 9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1
+
+# Set retention and storage
+CMD [ "--config.file=/etc/prometheus/prometheus.yml", \
+      "--storage.tsdb.path=/prometheus/data", \
+      "--storage.tsdb.retention.time=30d", \
+      "--storage.tsdb.retention.size=10GB", \
+      "--web.console.libraries=/usr/share/prometheus/console_libraries", \
+      "--web.console.templates=/usr/share/prometheus/consoles", \
+      "--web.enable-lifecycle", \
+      "--web.enable-admin-api" ]

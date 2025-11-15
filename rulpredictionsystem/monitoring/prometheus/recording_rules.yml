@@ -1,0 +1,68 @@
+# Recording Rules for Pre-computed Aggregations
+# Improves query performance for frequently used metrics
+
+groups:
+  - name: api_recording_rules
+    interval: 30s
+    rules:
+      # Request rate per endpoint
+      - record: job:fastapi_requests:rate5m
+        expr: rate(fastapi_requests_total[5m])
+
+      # Error rate
+      - record: job:fastapi_errors:rate5m
+        expr: rate(fastapi_requests_total{status=~"5.."}[5m])
+
+      # Request duration percentiles
+      - record: job:fastapi_request_duration:p50
+        expr: histogram_quantile(0.50, rate(fastapi_request_duration_seconds_bucket[5m]))
+
+      - record: job:fastapi_request_duration:p95
+        expr: histogram_quantile(0.95, rate(fastapi_request_duration_seconds_bucket[5m]))
+
+      - record: job:fastapi_request_duration:p99
+        expr: histogram_quantile(0.99, rate(fastapi_request_duration_seconds_bucket[5m]))
+
+  - name: model_recording_rules
+    interval: 30s
+    rules:
+      # Prediction rate
+      - record: job:model_predictions:rate5m
+        expr: rate(model_predictions_total[5m])
+
+      # Prediction success rate
+      - record: job:model_predictions:success_rate
+        expr: 1 - (rate(model_predictions_failed_total[5m]) / rate(model_predictions_total[5m]))
+
+      # Average inference time
+      - record: job:model_inference:avg_duration
+        expr: rate(model_inference_duration_seconds_sum[5m]) / rate(model_inference_duration_seconds_count[5m])
+
+      # RUL prediction distribution
+      - record: job:rul_predictions:critical_rate
+        expr: rate(model_predictions_total{rul_category="critical"}[5m]) / rate(model_predictions_total[5m])
+
+      - record: job:rul_predictions:warning_rate
+        expr: rate(model_predictions_total{rul_category="warning"}[5m]) / rate(model_predictions_total[5m])
+
+  - name: infrastructure_recording_rules
+    interval: 30s
+    rules:
+      # CPU usage
+      - record: instance:cpu_usage:percent
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      # Memory usage
+      - record: instance:memory_usage:percent
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+
+      # Disk usage
+      - record: instance:disk_usage:percent
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100
+
+      # Network throughput
+      - record: instance:network_receive:rate
+        expr: rate(node_network_receive_bytes_total[5m])
+
+      - record: instance:network_transmit:rate
+        expr: rate(node_network_transmit_bytes_total[5m])
