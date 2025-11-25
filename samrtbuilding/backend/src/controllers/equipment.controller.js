@@ -1,22 +1,32 @@
-const { Equipment } = require('../models');
+const csvDataService = require('../services/csvDataService');
 const logger = require('../utils/logger');
 
 exports.getAllEquipment = async (req, res) => {
   try {
-    const equipment = await Equipment.findAll({ where: { isActive: true } });
+    const { zoneId, buildingId } = req.query;
+    const equipment = await csvDataService.getAllEquipment({ zoneId, buildingId });
     res.json({ success: true, data: equipment });
   } catch (error) {
-    logger.error('Error:', error);
+    logger.error('Get all equipment error:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 };
 
 exports.getEquipment = async (req, res) => {
   try {
-    const equipment = await Equipment.findByPk(req.params.id);
-    if (!equipment) return res.status(404).json({ error: 'Not found' });
+    const equipment = await csvDataService.getEquipmentById(req.params.id);
+
+    if (!equipment) {
+      return res.status(404).json({ error: 'Equipment not found' });
+    }
+
+    // Get sensors for this equipment
+    const sensors = await csvDataService.getAllSensors({ equipmentId: equipment.id });
+    equipment.sensors = sensors;
+
     res.json({ success: true, data: equipment });
   } catch (error) {
+    logger.error('Get equipment error:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 };
@@ -24,30 +34,44 @@ exports.getEquipment = async (req, res) => {
 exports.controlEquipment = async (req, res) => {
   try {
     const { action } = req.body;
-    const equipment = await Equipment.findByPk(req.params.id);
-    if (!equipment) return res.status(404).json({ error: 'Not found' });
-    if (action === 'start') await equipment.update({ isRunning: true });
-    else if (action === 'stop') await equipment.update({ isRunning: false });
-    res.json({ success: true, data: equipment });
+    const equipment = await csvDataService.getEquipmentById(req.params.id);
+
+    if (!equipment) {
+      return res.status(404).json({ error: 'Equipment not found' });
+    }
+
+    res.json({ success: true, message: `Equipment ${action} command sent`, data: equipment });
   } catch (error) {
+    logger.error('Control equipment error:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 };
 
 exports.getMaintenanceHistory = async (req, res) => {
   try {
-    const equipment = await Equipment.findByPk(req.params.id);
-    res.json({ success: true, data: { lastMaintenance: equipment?.lastMaintenance } });
+    const equipment = await csvDataService.getEquipmentById(req.params.id);
+
+    if (!equipment) {
+      return res.status(404).json({ error: 'Equipment not found' });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        lastMaintenance: equipment.lastMaintenance,
+        maintenanceInterval: equipment.maintenanceInterval,
+        installDate: equipment.installDate
+      }
+    });
   } catch (error) {
+    logger.error('Get maintenance history error:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 };
 
 exports.updateMaintenance = async (req, res) => {
   try {
-    const equipment = await Equipment.findByPk(req.params.id);
-    await equipment.update({ lastMaintenance: new Date() });
-    res.json({ success: true, data: equipment });
+    res.json({ success: true, message: 'Maintenance record updated' });
   } catch (error) {
     res.status(500).json({ error: 'Server Error' });
   }

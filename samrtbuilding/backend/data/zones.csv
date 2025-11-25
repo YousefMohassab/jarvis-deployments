@@ -1,0 +1,21 @@
+id,buildingId,name,type,floor,area,targetTemperature,occupancyLimit,currentOccupancy,currentTemperature,currentHumidity,setpoint,schedule,description,isActive
+1,1,Executive Offices,office,12,5000,22,50,35,21.5,45,22,{},Executive suite and boardrooms,true
+2,1,Finance Department,office,10,8000,22,80,65,22.1,42,22,{},Finance and accounting offices,true
+3,1,Marketing Wing,office,8,6500,22,60,48,21.8,44,22,{},Marketing and creative teams,true
+4,1,IT Operations,server_room,5,3000,18,20,12,17.8,40,18,{},Server room and IT infrastructure,true
+5,1,Main Lobby,common,1,4000,21,200,85,20.9,38,21,{},Main entrance and reception,true
+6,1,Cafeteria,dining,2,5500,21,150,92,22.3,55,21,{},Employee dining area,true
+7,1,Conference Center,meeting,11,7000,22,200,45,21.7,43,22,{},Large conference rooms,true
+8,1,Gymnasium,recreation,1,4500,20,100,28,20.2,50,20,{},Employee fitness center,true
+9,2,Production Floor A,industrial,1,45000,20,150,128,19.8,48,20,{},Main production line,true
+10,2,Production Floor B,industrial,1,45000,20,150,135,20.1,47,20,{},Secondary production line,true
+11,2,Warehouse,storage,2,60000,18,50,32,18.2,52,18,{},Raw materials and finished goods,true
+12,2,Quality Control Lab,laboratory,3,8000,21,30,18,20.9,45,21,{},Testing and quality assurance,true
+13,2,Administrative Offices,office,3,12000,22,100,78,21.8,43,22,{},Plant management offices,true
+14,3,Research Lab 1,laboratory,3,10000,21,40,28,20.8,42,21,{},Advanced materials research,true
+15,3,Research Lab 2,laboratory,4,10000,21,40,32,21.1,43,21,{},Energy systems research,true
+16,3,Research Lab 3,laboratory,5,10000,21,40,25,20.9,41,21,{},Environmental testing,true
+17,3,Clean Room,clean_room,6,5000,20,15,8,19.9,35,20,{},Semiconductor fabrication,true
+18,3,Data Center,server_room,2,8000,18,10,6,17.7,38,18,{},Research computing cluster,true
+19,3,Collaboration Spaces,meeting,7,12000,22,120,65,21.9,44,22,{},Open collaboration and meeting rooms,true
+20,3,Engineering Workshop,workshop,1,10000,20,50,35,20.3,46,20,{},Prototyping and fabrication,true

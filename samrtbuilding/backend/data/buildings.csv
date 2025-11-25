@@ -1,0 +1,4 @@
+id,name,address,city,state,zipCode,country,totalArea,floors,yearBuilt,buildingType,timezone,isActive
+1,Corporate Headquarters,123 Business Park Drive,San Francisco,CA,94105,USA,150000,12,2018,office,America/Los_Angeles,true
+2,Manufacturing Facility,456 Industrial Way,Austin,TX,78701,USA,200000,3,2015,industrial,America/Chicago,true
+3,Research & Development Center,789 Innovation Blvd,Boston,MA,02101,USA,85000,8,2020,office,America/New_York,true

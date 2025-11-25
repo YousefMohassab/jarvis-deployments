@@ -1,0 +1,48 @@
+id,zoneId,buildingId,name,type,manufacturer,model,serialNumber,installDate,warrantyExpiry,ratedPowerKw,operatingHours,maintenanceInterval,lastMaintenance,status,isActive
+1,1,1,HVAC Unit - Executive 1,hvac,Carrier,WeatherMaker 48TC,WM48-2018-001,2018-06-15,2028-06-15,45.5,12580,2190,2024-10-15,online,true
+2,1,1,HVAC Unit - Executive 2,hvac,Carrier,WeatherMaker 48TC,WM48-2018-002,2018-06-15,2028-06-15,45.5,12420,2190,2024-10-15,online,true
+3,2,1,HVAC Unit - Finance 1,hvac,Trane,XL18i,TXL-2018-101,2018-07-10,2028-07-10,65.2,13200,2190,2024-11-01,online,true
+4,2,1,HVAC Unit - Finance 2,hvac,Trane,XL18i,TXL-2018-102,2018-07-10,2028-07-10,65.2,13150,2190,2024-11-01,online,true
+5,3,1,HVAC Unit - Marketing,hvac,Lennox,XC25,LXC-2018-201,2018-08-20,2028-08-20,52.8,11900,2190,2024-09-20,online,true
+6,4,1,Precision Cooling Unit 1,precision_cooling,APC,InRow RC,APC-IRC-2018-301,2018-05-10,2028-05-10,38.6,28450,1095,2024-08-15,online,true
+7,4,1,Precision Cooling Unit 2,precision_cooling,APC,InRow RC,APC-IRC-2018-302,2018-05-10,2028-05-10,38.6,28380,1095,2024-08-15,online,true
+8,4,1,UPS System,ups,Eaton,9395,EAT-9395-2018-001,2018-05-01,2028-05-01,225.0,28800,365,2024-05-01,online,true
+9,5,1,Main Lobby Lighting,lighting,Philips,LED Array,PHL-LED-2018-401,2018-06-01,2030-06-01,8.5,18250,4380,2024-06-01,online,true
+10,5,1,Lobby HVAC,hvac,York,YK Centrifugal,YRK-YK-2018-402,2018-06-01,2028-06-01,85.3,15680,2190,2024-10-10,online,true
+11,6,1,Kitchen Equipment Suite,kitchen,Vulcan,Commercial Package,VUL-COM-2018-501,2018-07-15,2026-07-15,125.5,8760,730,2024-07-15,online,true
+12,6,1,Cafeteria HVAC,hvac,Daikin,VRV IV,DAI-VRV-2018-502,2018-07-15,2028-07-15,58.2,11250,2190,2024-09-15,online,true
+13,6,1,Walk-in Refrigeration,refrigeration,Kolpak,QS6-2018-503,KOL-QS6-2018-503,2018-07-20,2030-07-20,18.5,28800,365,2024-10-01,online,true
+14,7,1,Conference HVAC 1,hvac,Mitsubishi,City Multi,MIT-CM-2018-601,2018-08-01,2028-08-01,68.4,10250,2190,2024-08-01,online,true
+15,7,1,AV Systems Suite,av_system,Crestron,Enterprise Package,CRE-ENT-2018-602,2018-08-15,2026-08-15,12.3,5460,1095,2024-08-15,online,true
+16,8,1,Gym HVAC,hvac,Rheem,Commercial Package,RHE-COM-2018-701,2018-09-01,2028-09-01,42.5,12580,2190,2024-09-01,online,true
+17,9,2,Production Line Motors 1,industrial_motor,Siemens,1LA8 Series,SIE-1LA8-2015-901,2015-03-15,2025-03-15,185.5,35040,1095,2024-06-15,online,true
+18,9,2,Production Line Motors 2,industrial_motor,Siemens,1LA8 Series,SIE-1LA8-2015-902,2015-03-15,2025-03-15,185.5,35120,1095,2024-06-15,online,true
+19,9,2,Conveyor System 1,conveyor,FlexLink,X85,FLX-X85-2015-903,2015-04-01,2025-04-01,28.5,34850,730,2024-04-01,online,true
+20,9,2,HVAC - Production A,industrial_hvac,Johnson Controls,York YVAA,JCI-YVAA-2015-904,2015-02-20,2025-02-20,225.8,42350,1095,2024-05-20,online,true
+21,10,2,Production Line Motors 3,industrial_motor,Siemens,1LA8 Series,SIE-1LA8-2015-1001,2015-03-15,2025-03-15,185.5,34980,1095,2024-06-15,online,true
+22,10,2,Production Line Motors 4,industrial_motor,Siemens,1LA8 Series,SIE-1LA8-2015-1002,2015-03-15,2025-03-15,185.5,35200,1095,2024-06-15,online,true
+23,10,2,Conveyor System 2,conveyor,FlexLink,X85,FLX-X85-2015-1003,2015-04-01,2025-04-01,28.5,34920,730,2024-04-01,online,true
+24,10,2,HVAC - Production B,industrial_hvac,Johnson Controls,York YVAA,JCI-YVAA-2015-1004,2015-02-20,2025-02-20,225.8,42280,1095,2024-05-20,online,true
+25,11,2,Warehouse Lighting,led_lighting,Lithonia,IBG Series,LIT-IBG-2015-1101,2015-05-10,2030-05-10,45.5,18250,8760,2024-05-10,online,true
+26,11,2,Warehouse HVAC,industrial_hvac,Daikin,Applied Rooftop,DAI-ART-2015-1102,2015-05-15,2025-05-15,155.2,28450,1095,2024-07-15,online,true
+27,11,2,Material Handling Equipment,material_handling,Raymond,Forklift Fleet,RAY-FLT-2015-1103,2015-06-01,2025-06-01,32.5,15680,365,2024-09-01,online,true
+28,12,2,Lab Equipment Suite,laboratory,LabCorp,Testing Package,LAB-TST-2016-1201,2016-01-15,2026-01-15,48.5,12450,365,2024-02-15,online,true
+29,12,2,Lab HVAC,precision_hvac,Carrier,39M Package,CAR-39M-2016-1202,2016-01-20,2026-01-20,52.8,14250,1095,2024-03-20,online,true
+30,13,2,Office HVAC - Plant,hvac,Trane,Voyager,TRA-VOY-2015-1301,2015-02-01,2025-02-01,78.5,15680,2190,2024-08-01,online,true
+31,14,3,Lab Equipment - Materials 1,laboratory,Thermo Fisher,Ultimate 3000,TFS-ULT-2020-1401,2020-03-10,2030-03-10,15.5,8250,365,2024-03-10,online,true
+32,14,3,Lab Equipment - Materials 2,laboratory,Thermo Fisher,Ultimate 3000,TFS-ULT-2020-1402,2020-03-10,2030-03-10,15.5,8180,365,2024-03-10,online,true
+33,14,3,Lab HVAC - Materials,precision_hvac,Daikin,VRV IV Lab,DAI-VRV-2020-1403,2020-02-15,2030-02-15,38.5,11450,1095,2024-05-15,online,true
+34,15,3,Lab Equipment - Energy 1,laboratory,Keysight,N9030A PXA,KEY-PXA-2020-1501,2020-04-05,2030-04-05,12.5,7850,365,2024-04-05,online,true
+35,15,3,Lab Equipment - Energy 2,laboratory,Keysight,N9030A PXA,KEY-PXA-2020-1502,2020-04-05,2030-04-05,12.5,7920,365,2024-04-05,online,true
+36,15,3,Lab HVAC - Energy,precision_hvac,Daikin,VRV IV Lab,DAI-VRV-2020-1503,2020-03-20,2030-03-20,38.5,11280,1095,2024-06-20,online,true
+37,16,3,Environmental Test Chamber 1,test_equipment,ESPEC,SH-641,ESP-SH-2020-1601,2020-05-15,2030-05-15,45.5,6250,365,2024-05-15,online,true
+38,16,3,Environmental Test Chamber 2,test_equipment,ESPEC,SH-641,ESP-SH-2020-1602,2020-05-15,2030-05-15,45.5,6180,365,2024-05-15,online,true
+39,16,3,Lab HVAC - Environmental,precision_hvac,Daikin,VRV IV Lab,DAI-VRV-2020-1603,2020-05-01,2030-05-01,38.5,11050,1095,2024-08-01,online,true
+40,17,3,Clean Room HVAC,clean_room_hvac,Camfil,AstroCel,CAM-AST-2020-1701,2020-06-10,2030-06-10,125.5,14250,365,2024-06-10,online,true
+41,17,3,Clean Room Equipment,clean_room_equipment,Terra Universal,Clean Room Package,TER-CRP-2020-1702,2020-06-20,2030-06-20,32.5,14180,365,2024-06-20,online,true
+42,18,3,HPC Cluster,server,Dell,PowerEdge R750,DEL-R750-2020-1801,2020-07-01,2027-07-01,185.5,28800,365,2024-07-01,online,true
+43,18,3,Data Center Cooling 1,precision_cooling,Vertiv,Liebert DSE,VER-DSE-2020-1802,2020-06-25,2030-06-25,85.5,28720,365,2024-06-25,online,true
+44,18,3,Data Center Cooling 2,precision_cooling,Vertiv,Liebert DSE,VER-DSE-2020-1803,2020-06-25,2030-06-25,85.5,28680,365,2024-06-25,online,true
+45,19,3,Collaboration HVAC,hvac,Mitsubishi,City Multi,MIT-CM-2020-1901,2020-08-10,2030-08-10,52.5,9850,2190,2024-08-10,online,true
+46,20,3,Workshop Equipment Suite,workshop,Haas,CNC Package,HAA-CNC-2020-2001,2020-09-01,2030-09-01,78.5,8450,365,2024-09-01,online,true
+47,20,3,Workshop HVAC,industrial_hvac,Daikin,Applied RTU,DAI-RTU-2020-2002,2020-08-25,2030-08-25,52.8,10250,1095,2024-11-25,online,true

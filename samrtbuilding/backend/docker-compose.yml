@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # API Service
+  # Backend API Service (CSV-based)
   api:
     build:
       context: .
@@ -13,124 +13,26 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=8000
-      - DB_HOST=timescaledb
-      - DB_PORT=5432
-      - DB_NAME=smart_building
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres_password
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - MQTT_BROKER=mqtt://mosquitto:1883
-      - JWT_SECRET=production-jwt-secret-change-this
-      - ENABLE_MOCK_DEVICES=true
-      - ENABLE_WEBSOCKET=true
-      - ENABLE_MQTT=true
-    depends_on:
-      timescaledb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      mosquitto:
-        condition: service_started
     volumes:
       - ./logs:/app/logs
+      - ./data:/app/data
     networks:
       - smart-building-network
 
-  # PostgreSQL + TimescaleDB
-  timescaledb:
-    image: timescale/timescaledb:latest-pg15
-    container_name: smart-building-db
+  # Frontend Service
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: smart-building-frontend
     restart: unless-stopped
     ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres_password
-      - POSTGRES_DB=smart_building
-    volumes:
-      - timescaledb-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - smart-building-network
-
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: smart-building-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - smart-building-network
-
-  # MQTT Broker (Mosquitto)
-  mosquitto:
-    image: eclipse-mosquitto:latest
-    container_name: smart-building-mqtt
-    restart: unless-stopped
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-    networks:
-      - smart-building-network
-
-  # pgAdmin (Optional - for database management)
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: smart-building-pgadmin
-    restart: unless-stopped
-    ports:
-      - "5050:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@smartbuilding.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - "3000:80"
     depends_on:
-      - timescaledb
+      - api
     networks:
       - smart-building-network
-    profiles:
-      - tools
-
-  # Redis Commander (Optional - for Redis management)
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: smart-building-redis-commander
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      - REDIS_HOSTS=local:redis:6379
-    depends_on:
-      - redis
-    networks:
-      - smart-building-network
-    profiles:
-      - tools
 
 networks:
   smart-building-network:
     driver: bridge
-
-volumes:
-  timescaledb-data:
-  redis-data:
-  pgadmin-data:

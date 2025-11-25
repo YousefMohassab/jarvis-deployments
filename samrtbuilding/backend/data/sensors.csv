@@ -1,0 +1,42 @@
+id,equipmentId,zoneId,buildingId,sensorType,sensorId,name,unit,minValue,maxValue,calibrationDate,lastReading,status,isActive
+1,1,1,1,temperature,TEMP-001,Executive HVAC Temp 1,°C,15,30,2024-06-01,21.5,online,true
+2,1,1,1,power,PWR-001,Executive HVAC Power 1,kW,0,100,2024-06-01,45.3,online,true
+3,2,1,1,temperature,TEMP-002,Executive HVAC Temp 2,°C,15,30,2024-06-01,21.6,online,true
+4,2,1,1,power,PWR-002,Executive HVAC Power 2,kW,0,100,2024-06-01,44.8,online,true
+5,3,2,1,temperature,TEMP-003,Finance HVAC Temp 1,°C,15,30,2024-07-01,22.1,online,true
+6,3,2,1,power,PWR-003,Finance HVAC Power 1,kW,0,150,2024-07-01,65.5,online,true
+7,4,2,1,temperature,TEMP-004,Finance HVAC Temp 2,°C,15,30,2024-07-01,21.9,online,true
+8,4,2,1,power,PWR-004,Finance HVAC Power 2,kW,0,150,2024-07-01,64.8,online,true
+9,6,4,1,temperature,TEMP-006,IT Precision Cooling 1,°C,15,25,2024-05-01,17.8,online,true
+10,6,4,1,power,PWR-006,IT Precision Cooling Power 1,kW,0,100,2024-05-01,38.2,online,true
+11,7,4,1,temperature,TEMP-007,IT Precision Cooling 2,°C,15,25,2024-05-01,17.9,online,true
+12,7,4,1,power,PWR-007,IT Precision Cooling Power 2,kW,0,100,2024-05-01,38.5,online,true
+13,8,4,1,power,PWR-008,UPS System Power,kW,0,300,2024-05-01,225.3,online,true
+14,8,4,1,voltage,VOLT-008,UPS System Voltage,V,400,520,2024-05-01,482.5,online,true
+15,9,5,1,power,PWR-009,Lobby Lighting Power,kW,0,20,2024-06-01,8.3,online,true
+16,10,5,1,temperature,TEMP-010,Lobby HVAC Temp,°C,15,30,2024-06-01,20.9,online,true
+17,10,5,1,power,PWR-010,Lobby HVAC Power,kW,0,150,2024-06-01,85.8,online,true
+18,11,6,1,power,PWR-011,Kitchen Equipment Power,kW,0,200,2024-07-01,125.2,online,true
+19,11,6,1,temperature,TEMP-011,Kitchen Temperature,°C,15,35,2024-07-01,24.5,online,true
+20,13,6,1,temperature,TEMP-013,Refrigeration Temp,°C,-5,10,2024-10-01,2.3,online,true
+21,13,6,1,power,PWR-013,Refrigeration Power,kW,0,50,2024-10-01,18.7,online,true
+22,17,9,2,power,PWR-017,Production Motor 1 Power,kW,0,250,2024-06-01,185.2,online,true
+23,17,9,2,vibration,VIB-017,Production Motor 1 Vibration,mm/s,0,10,2024-06-01,2.3,online,true
+24,18,9,2,power,PWR-018,Production Motor 2 Power,kW,0,250,2024-06-01,186.1,online,true
+25,18,9,2,vibration,VIB-018,Production Motor 2 Vibration,mm/s,0,10,2024-06-01,2.1,online,true
+26,20,9,2,temperature,TEMP-020,Production A HVAC Temp,°C,15,30,2024-05-01,19.8,online,true
+27,20,9,2,power,PWR-020,Production A HVAC Power,kW,0,300,2024-05-01,226.5,online,true
+28,21,10,2,power,PWR-021,Production Motor 3 Power,kW,0,250,2024-06-01,184.8,online,true
+29,21,10,2,vibration,VIB-021,Production Motor 3 Vibration,mm/s,0,10,2024-06-01,2.4,online,true
+30,22,10,2,power,PWR-022,Production Motor 4 Power,kW,0,250,2024-06-01,185.9,online,true
+31,22,10,2,vibration,VIB-022,Production Motor 4 Vibration,mm/s,0,10,2024-06-01,2.2,online,true
+32,24,10,2,temperature,TEMP-024,Production B HVAC Temp,°C,15,30,2024-05-01,20.1,online,true
+33,24,10,2,power,PWR-024,Production B HVAC Power,kW,0,300,2024-05-01,225.2,online,true
+34,26,11,2,temperature,TEMP-026,Warehouse HVAC Temp,°C,15,30,2024-07-01,18.2,online,true
+35,26,11,2,power,PWR-026,Warehouse HVAC Power,kW,0,200,2024-07-01,155.8,online,true
+36,42,18,3,power,PWR-042,HPC Cluster Power,kW,0,250,2024-07-01,185.2,online,true
+37,42,18,3,temperature,TEMP-042,HPC Cluster Temp,°C,15,25,2024-07-01,19.5,online,true
+38,43,18,3,temperature,TEMP-043,DC Cooling 1 Temp,°C,15,25,2024-06-01,17.7,online,true
+39,43,18,3,power,PWR-043,DC Cooling 1 Power,kW,0,150,2024-06-01,85.2,online,true
+40,44,18,3,temperature,TEMP-044,DC Cooling 2 Temp,°C,15,25,2024-06-01,17.8,online,true
+41,44,18,3,power,PWR-044,DC Cooling 2 Power,kW,0,150,2024-06-01,85.6,online,true

@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const energyController = require('../controllers/energy.controller');
-const { authenticateToken } = require('../middleware/auth');
-
-// All routes require authentication
-router.use(authenticateToken);
 
 // Get current energy consumption
 router.get('/current', energyController.getCurrentEnergy);

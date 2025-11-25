@@ -1,0 +1,21 @@
+id,equipmentId,zoneId,buildingId,alertType,severity,title,description,threshold,actualValue,timestamp,acknowledgedAt,acknowledgedBy,resolvedAt,status
+1,17,9,2,high_power,warning,High Power Consumption Detected,Production Motor 1 consuming 15% above normal,200,215.5,2024-11-20T14:30:00Z,2024-11-20T14:45:00Z,maintenance_team,2024-11-20T16:20:00Z,resolved
+2,8,4,1,voltage_fluctuation,critical,Voltage Fluctuation Alert,UPS System experiencing voltage instability,500,525.3,2024-11-18T09:15:00Z,2024-11-18T09:20:00Z,it_team,2024-11-18T10:45:00Z,resolved
+3,20,9,2,high_temperature,warning,Temperature Above Setpoint,Production Floor A temperature 2°C above target,22,24.1,2024-11-19T11:45:00Z,2024-11-19T12:00:00Z,facilities_team,2024-11-19T13:30:00Z,resolved
+4,43,18,3,efficiency_drop,info,Cooling Efficiency Reduced,Data Center Cooling 1 operating below optimal efficiency,0.90,0.82,2024-11-21T16:20:00Z,2024-11-21T16:35:00Z,it_team,2024-11-22T08:15:00Z,resolved
+5,11,6,1,maintenance_due,info,Scheduled Maintenance Required,Kitchen Equipment Suite maintenance window approaching,0,0,2024-11-15T08:00:00Z,2024-11-15T08:15:00Z,facilities_team,2024-11-16T14:00:00Z,resolved
+6,26,11,2,high_power,warning,Increased Power Draw,Warehouse HVAC consuming 12% more than expected,170,185.8,2024-11-17T13:45:00Z,2024-11-17T14:00:00Z,maintenance_team,2024-11-17T16:30:00Z,resolved
+7,42,18,3,high_temperature,warning,Server Temperature Elevated,HPC Cluster temperature approaching upper limit,22,23.8,2024-11-22T10:30:00Z,2024-11-22T10:35:00Z,it_team,2024-11-22T11:45:00Z,resolved
+8,13,6,1,low_temperature,critical,Refrigeration Temperature Too High,Walk-in refrigerator temperature above safe limit,5,7.2,2024-11-16T22:15:00Z,2024-11-16T22:18:00Z,facilities_team,2024-11-16T23:45:00Z,resolved
+9,6,4,1,power_spike,warning,Power Spike Detected,Precision Cooling Unit 1 experienced sudden power increase,45,52.3,2024-11-23T07:20:00Z,2024-11-23T07:25:00Z,it_team,2024-11-23T09:00:00Z,resolved
+10,18,9,2,vibration_high,warning,Abnormal Vibration Detected,Production Motor 2 vibration levels elevated,5,6.8,2024-11-24T15:40:00Z,2024-11-24T15:50:00Z,maintenance_team,2024-11-24T18:20:00Z,resolved
+11,3,2,1,efficiency_drop,info,HVAC Efficiency Below Target,Finance HVAC 1 efficiency 5% below baseline,0.85,0.80,2024-11-14T14:15:00Z,2024-11-14T14:30:00Z,facilities_team,2024-11-15T10:00:00Z,resolved
+12,40,17,3,filter_change,info,Air Filter Replacement Due,Clean Room HVAC filters need replacement,0,0,2024-11-12T09:00:00Z,2024-11-12T09:15:00Z,facilities_team,2024-11-13T11:30:00Z,resolved
+13,27,11,2,high_power,warning,Material Handling Overload,Forklift fleet consuming excessive power,40,48.5,2024-11-21T11:25:00Z,2024-11-21T11:35:00Z,operations_team,2024-11-21T13:45:00Z,resolved
+14,10,5,1,high_temperature,warning,Lobby Temperature Elevated,Main lobby HVAC struggling to maintain setpoint,23,25.2,2024-11-19T13:50:00Z,2024-11-19T14:05:00Z,facilities_team,2024-11-19T15:30:00Z,resolved
+15,24,10,2,maintenance_due,info,HVAC Maintenance Scheduled,Production Floor B HVAC quarterly service due,0,0,2024-11-10T08:00:00Z,2024-11-10T08:20:00Z,maintenance_team,2024-11-11T16:00:00Z,resolved
+16,1,1,1,power_optimization,info,Energy Savings Opportunity,Executive HVAC 1 can optimize schedule for 8% savings,0,0,2024-11-25T06:00:00Z,,,pending
+17,22,10,2,vibration_high,warning,Motor Vibration Alert,Production Motor 4 showing increased vibration,5,6.2,2024-11-25T09:15:00Z,2024-11-25T09:20:00Z,maintenance_team,,acknowledged
+18,45,19,3,high_power,info,Above Average Consumption,Collaboration HVAC power draw 10% higher than typical,60,65.8,2024-11-25T08:45:00Z,,,pending
+19,29,12,2,calibration_due,info,Sensor Calibration Required,Lab HVAC temperature sensors need recalibration,0,0,2024-11-25T07:30:00Z,,,pending
+20,5,3,1,filter_change,info,Filter Maintenance Reminder,Marketing HVAC air filters replacement recommended,0,0,2024-11-25T06:15:00Z,2024-11-25T08:00:00Z,facilities_team,,acknowledged

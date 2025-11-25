@@ -1,9 +1,14 @@
-const { cache } = require('../config/redis');
+// Simple settings storage (could be expanded to use JSON file if needed)
+let systemSettings = {
+  energyRate: 0.12,
+  temperatureUnit: 'C',
+  currency: 'USD',
+  timezone: 'America/Los_Angeles'
+};
 
 exports.getSettings = async (req, res) => {
   try {
-    const settings = { energyRate: 0.12, temperatureUnit: 'F' };
-    res.json({ success: true, data: settings });
+    res.json({ success: true, data: systemSettings });
   } catch (error) {
     res.status(500).json({ error: 'Server Error' });
   }
@@ -11,8 +16,8 @@ exports.getSettings = async (req, res) => {
 
 exports.updateSettings = async (req, res) => {
   try {
-    await cache.set('system:settings', req.body, 86400);
-    res.json({ success: true, data: req.body });
+    systemSettings = { ...systemSettings, ...req.body };
+    res.json({ success: true, data: systemSettings });
   } catch (error) {
     res.status(500).json({ error: 'Server Error' });
   }

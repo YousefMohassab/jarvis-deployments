@@ -1,0 +1,36 @@
+services:
+  # Backend API Service (CSV-based)
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart-building-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    networks:
+      - smart-building-network
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smart-building-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - smart-building-network
+
+networks:
+  smart-building-network:
+    driver: bridge

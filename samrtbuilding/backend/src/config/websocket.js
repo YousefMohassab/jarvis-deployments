@@ -1,5 +1,4 @@
 const { Server } = require('socket.io');
-const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
 let io = null;
@@ -15,53 +14,31 @@ function initializeWebSocket(server) {
     pingInterval: 25000
   });
 
-  // Authentication middleware
-  io.use((socket, next) => {
-    const token = socket.handshake.auth.token || socket.handshake.query.token;
-
-    if (!token) {
-      return next(new Error('Authentication token required'));
-    }
-
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      socket.userId = decoded.id;
-      socket.userRole = decoded.role;
-      next();
-    } catch (error) {
-      logger.error('WebSocket authentication error:', error);
-      next(new Error('Invalid authentication token'));
-    }
-  });
-
   // Connection handling
   io.on('connection', (socket) => {
-    logger.info(`WebSocket client connected: ${socket.id} (User: ${socket.userId})`);
+    logger.info(`WebSocket client connected: ${socket.id}`);
 
-    // Join user-specific room
-    socket.join(`user:${socket.userId}`);
-
-    // Join building-specific rooms based on user permissions
+    // Join building-specific rooms
     socket.on('join:building', (buildingId) => {
       socket.join(`building:${buildingId}`);
-      logger.info(`User ${socket.userId} joined building room: ${buildingId}`);
+      logger.info(`Client ${socket.id} joined building room: ${buildingId}`);
     });
 
     // Join zone-specific rooms
     socket.on('join:zone', (zoneId) => {
       socket.join(`zone:${zoneId}`);
-      logger.info(`User ${socket.userId} joined zone room: ${zoneId}`);
+      logger.info(`Client ${socket.id} joined zone room: ${zoneId}`);
     });
 
     // Leave rooms
     socket.on('leave:building', (buildingId) => {
       socket.leave(`building:${buildingId}`);
-      logger.info(`User ${socket.userId} left building room: ${buildingId}`);
+      logger.info(`Client ${socket.id} left building room: ${buildingId}`);
     });
 
     socket.on('leave:zone', (zoneId) => {
       socket.leave(`zone:${zoneId}`);
-      logger.info(`User ${socket.userId} left zone room: ${zoneId}`);
+      logger.info(`Client ${socket.id} left zone room: ${zoneId}`);
     });
 
     // Handle disconnection
@@ -147,15 +124,6 @@ const emit = {
     }
   },
 
-  // Send to specific user
-  toUser(userId, event, data) {
-    if (io) {
-      io.to(`user:${userId}`).emit(event, {
-        ...data,
-        timestamp: new Date().toISOString()
-      });
-    }
-  }
 };
 
 function getIO() {
